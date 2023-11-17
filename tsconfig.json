@@ -5,5 +5,5 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext"
   },
-  "include": ["generator.ts"],
+  "include": ["generator.ts", "test.ts"]
 }

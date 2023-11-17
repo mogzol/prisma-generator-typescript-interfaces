@@ -8,9 +8,7 @@
       "type": "node",
       "request": "attach",
       "name": "Attach",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-    },
+      "skipFiles": ["<node_internals>/**"]
+    }
   ]
 }

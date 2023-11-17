@@ -1,3 +1,6 @@
+// Complete example schema to generate during development. Uses ts-node to run the generator.
+// Run `npm run generate` to generate the typescript output.
+
 datasource db {
   provider = "postgresql"
   url      = ""
@@ -8,7 +11,8 @@ generator client {
 }
 
 generator typescriptInterfaces {
-  provider = "node --loader ts-node/esm generator.ts"
+  provider           = "node generator.js"
+  output             = "example.ts"
   formatWithPrettier = true
 }
 
@@ -41,16 +45,16 @@ model Address {
 }
 
 model Data {
-  id                   String    @id @default(uuid()) @db.Uuid
-  stringField          String
-  booleanField         Boolean
-  intField             Int
-  bigIntField          BigInt
-  floatField           Float
-  decimalField         Decimal
-  dateField            DateTime
-  jsonField            Json
-  bytesField           Bytes
+  id           String   @id @default(uuid()) @db.Uuid
+  stringField  String
+  booleanField Boolean
+  intField     Int
+  bigIntField  BigInt
+  floatField   Float
+  decimalField Decimal
+  dateField    DateTime
+  jsonField    Json
+  bytesField   Bytes
 
   optionalStringField  String?
   optionalBooleanField Boolean?
@@ -62,16 +66,16 @@ model Data {
   optionalJsonField    Json?
   optionalBytesField   Bytes?
 
-  stringArrayField     String[]
-  booleanArrayField    Boolean[]
-  intArrayField        Int[]
-  bigIntArrayField     BigInt[]
-  floatArrayField      Float[]
-  decimalArrayField    Decimal[]
-  dateArrayField       DateTime[]
-  jsonArrayField       Json[]
-  bytesArrayField      Bytes[]
+  stringArrayField  String[]
+  booleanArrayField Boolean[]
+  intArrayField     Int[]
+  bigIntArrayField  BigInt[]
+  floatArrayField   Float[]
+  decimalArrayField Decimal[]
+  dateArrayField    DateTime[]
+  jsonArrayField    Json[]
+  bytesArrayField   Bytes[]
 
-  personId             Int       @unique
-  person               Person    @relation(fields: [personId], references: [id])
+  personId Int    @unique
+  person   Person @relation(fields: [personId], references: [id])
 }

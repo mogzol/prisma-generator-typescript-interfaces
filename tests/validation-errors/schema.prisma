@@ -1,0 +1,11 @@
+generator typescriptInterfaces {
+  provider    = "node generator.js"
+  enumType    = "incorrect"
+  dateType    = "wrong"
+  bigIntType  = "values"
+  decimalType = "go"
+  bytesType   = "here"
+  prettier    = "bad"
+}
+
+// TEST_INSERT_BASE_HERE

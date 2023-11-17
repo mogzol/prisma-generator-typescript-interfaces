@@ -11,10 +11,10 @@ interface Config {
   modelSuffix: string;
   modelPrefix: string;
   dateType: "string" | "Date";
-  bigIntType: "string" | "BigInt";
+  bigIntType: "string" | "bigint";
   decimalType: "string" | "Decimal";
   bytesType: "Buffer" | "string";
-  formatWithPrettier: boolean;
+  prettier: "true" | "false";
 }
 
 // Map of Prisma scalar types to Typescript type getters
@@ -33,12 +33,42 @@ const SCALAR_TYPE_GETTERS: Record<string, (config: Config) => string> = {
 // Since we want the output to have zero dependencies, define custom types which are compatible
 // with the actual Prisma types. If users need the real Prisma types, they can cast to them.
 const CUSTOM_TYPES: Record<string, string> = {
-  Json: "type JsonValue = string | number | boolean | { [key in string]: JsonValue } | Array<JsonValue> | null;",
+  JsonValue:
+    "type JsonValue = string | number | boolean | { [key in string]: JsonValue } | Array<JsonValue> | null;",
   Decimal: "interface Decimal {\n  valueOf(): string;\n}",
 };
 
+function validateConfig(config: Config) {
+  const errors: string[] = [];
+  if (!["stringUnion", "enum"].includes(config.enumType)) {
+    errors.push(`Invalid enumType: ${config.enumType}`);
+  }
+  if (!["string", "Date"].includes(config.dateType)) {
+    errors.push(`Invalid dateType: ${config.dateType}`);
+  }
+  if (!["string", "bigint"].includes(config.bigIntType)) {
+    errors.push(`Invalid bigIntType: ${config.bigIntType}`);
+  }
+  if (!["string", "Decimal"].includes(config.decimalType)) {
+    errors.push(`Invalid decimalType: ${config.decimalType}`);
+  }
+  if (!["Buffer", "string"].includes(config.bytesType)) {
+    errors.push(`Invalid bytesType: ${config.bytesType}`);
+  }
+  if (!["true", "false"].includes(config.prettier)) {
+    errors.push(`Invalid prettier: ${config.prettier}`);
+  }
+  if (errors.length > 0) {
+    throw new Error(errors.join("\n"));
+  }
+}
+
 // Get the Typescript code representing a Prisma Enum
-function getEnumTs(config: Config, enumData: DMMF.DatamodelEnum, enumNameMap: Map<string, string>): string {
+function getEnumTs(
+  config: Config,
+  enumData: DMMF.DatamodelEnum,
+  enumNameMap: Map<string, string>,
+): string {
   switch (config.enumType) {
     case "enum": {
       const enumValues = enumData.values.map(({ name }) => `  ${name} = "${name}"`).join(",\n");
@@ -59,23 +89,24 @@ function getModelTs(
   modelData: DMMF.Model,
   modelNameMap: Map<string, string>,
   enumNameMap: Map<string, string>,
-  usedCustomTypes: Set<keyof typeof CUSTOM_TYPES>
+  usedCustomTypes: Set<keyof typeof CUSTOM_TYPES>,
 ): string {
   const fields = modelData.fields
     .map(({ name, kind, type, isRequired, isList }) => {
       const getDefinition = (resolvedType: string) =>
-        `  ${name}${isRequired ? "" : "?"}: ${resolvedType}${isList ? "[]" : ""}`;
+        `  ${name}${isRequired ? "" : "?"}: ${resolvedType}${isList ? "[]" : ""};`;
 
       switch (kind) {
         case "scalar": {
-          if (type in CUSTOM_TYPES) {
-            usedCustomTypes.add(type);
-          }
           const typeGetter = SCALAR_TYPE_GETTERS[type];
           if (!typeGetter) {
             throw new Error(`Unknown scalar type: ${type}`);
           }
-          return getDefinition(typeGetter(config));
+          const resolvedType = typeGetter(config);
+          if (resolvedType in CUSTOM_TYPES) {
+            usedCustomTypes.add(resolvedType as keyof typeof CUSTOM_TYPES);
+          }
+          return getDefinition(resolvedType);
         }
         case "object": {
           const modelName = modelNameMap.get(type);
@@ -110,19 +141,21 @@ generatorHandler({
     };
   },
   async onGenerate(options) {
-    let config: Config = {
+    const config: Config = {
       enumType: "enum",
       enumSuffix: "",
       enumPrefix: "",
       modelSuffix: "",
       modelPrefix: "",
       dateType: "Date",
-      bigIntType: "BigInt",
+      bigIntType: "bigint",
       decimalType: "Decimal",
       bytesType: "Buffer",
-      formatWithPrettier: false,
+      prettier: "false",
       ...options.generator.config,
     };
+
+    validateConfig(config);
 
     const datamodel = options.dmmf.datamodel;
     const enums = datamodel.enums;
@@ -130,19 +163,22 @@ generatorHandler({
     const usedCustomTypes = new Set<keyof typeof CUSTOM_TYPES>();
 
     const enumNameMap = new Map<string, string>(
-      enums.map((e) => [e.name, `${config.enumPrefix}${e.name}${config.enumSuffix}`])
+      enums.map((e) => [e.name, `${config.enumPrefix}${e.name}${config.enumSuffix}`]),
     );
     const modelNameMap = new Map<string, string>(
-      models.map((m) => [m.name, `${config.modelPrefix}${m.name}${config.modelSuffix}`])
+      models.map((m) => [m.name, `${config.modelPrefix}${m.name}${config.modelSuffix}`]),
     );
 
     const enumsTs = enums.map((e) => getEnumTs(config, e, enumNameMap));
-    const modelsTs = models.map((m) => getModelTs(config, m, modelNameMap, enumNameMap, usedCustomTypes));
+    const modelsTs = models.map((m) =>
+      getModelTs(config, m, modelNameMap, enumNameMap, usedCustomTypes),
+    );
     const customTypesTs = Array.from(usedCustomTypes).map((t) => CUSTOM_TYPES[t]);
 
-    let ts = [...customTypesTs, ...enumsTs, ...modelsTs].join("\n\n");
+    let ts = [...enumsTs, ...modelsTs, ...customTypesTs].join("\n\n") + "\n";
 
-    if (config.formatWithPrettier) {
+    if (config.prettier === "true") {
+      // Prettier is imported inside this if so that it's not a required dependency
       let prettier: typeof import("prettier");
       try {
         prettier = await import("prettier");
@@ -158,7 +194,7 @@ generatorHandler({
     await mkdir(outputDir, { recursive: true });
     await writeFile(outputFile, ts);
 
-    if (config.formatWithPrettier) {
+    if (config.prettier) {
       await promisify(exec)(`npx prettier --write ${outputFile}`);
     }
   },

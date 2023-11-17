@@ -1,0 +1,9 @@
+generator typescriptInterfaces {
+  provider    = "node generator.js"
+  enumPrefix  = "enum"
+  enumSuffix  = "Enum"
+  modelPrefix = "model"
+  modelSuffix = "Model"
+}
+
+// TEST_INSERT_BASE_HERE

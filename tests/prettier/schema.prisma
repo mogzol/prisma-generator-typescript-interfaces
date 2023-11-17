@@ -1,0 +1,6 @@
+generator typescriptInterfaces {
+  provider = "node generator.js"
+  prettier = true
+}
+
+// TEST_INSERT_BASE_HERE

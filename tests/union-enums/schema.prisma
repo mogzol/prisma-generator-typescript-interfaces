@@ -1,0 +1,6 @@
+generator typescriptInterfaces {
+  provider = "node generator.js"
+  enumType = "stringUnion"
+}
+
+// TEST_INSERT_BASE_HERE

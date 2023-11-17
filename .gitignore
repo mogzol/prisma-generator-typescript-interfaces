@@ -1,2 +1,4 @@
 node_modules
-generator.js
+__TEST_TMP__
+*.js
+prisma/*.ts

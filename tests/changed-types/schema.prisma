@@ -1,0 +1,9 @@
+generator typescriptInterfaces {
+  provider    = "node generator.js"
+  dateType    = "string"
+  bigIntType  = "string"
+  decimalType = "string"
+  bytesType   = "string"
+}
+
+// TEST_INSERT_BASE_HERE

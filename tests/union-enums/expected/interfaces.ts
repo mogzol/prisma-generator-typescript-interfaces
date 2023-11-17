@@ -1,20 +1,4 @@
-interface Decimal {
-  valueOf(): string;
-}
-
-type JsonValue =
-  | string
-  | number
-  | boolean
-  | { [key in string]: JsonValue }
-  | Array<JsonValue>
-  | null;
-
-export enum Gender {
-  Male = "Male",
-  Female = "Female",
-  Other = "Other",
-}
+export type Gender = "Male" | "Female" | "Other";
 
 export interface Person {
   id: number;
@@ -43,7 +27,7 @@ export interface Data {
   stringField: string;
   booleanField: boolean;
   intField: number;
-  bigIntField: BigInt;
+  bigIntField: bigint;
   floatField: number;
   decimalField: Decimal;
   dateField: Date;
@@ -52,7 +36,7 @@ export interface Data {
   optionalStringField?: string;
   optionalBooleanField?: boolean;
   optionalIntField?: number;
-  optionalBigIntField?: BigInt;
+  optionalBigIntField?: bigint;
   optionalFloatField?: number;
   optionalDecimalField?: Decimal;
   optionalDateField?: Date;
@@ -61,7 +45,7 @@ export interface Data {
   stringArrayField: string[];
   booleanArrayField: boolean[];
   intArrayField: number[];
-  bigIntArrayField: BigInt[];
+  bigIntArrayField: bigint[];
   floatArrayField: number[];
   decimalArrayField: Decimal[];
   dateArrayField: Date[];
@@ -70,3 +54,9 @@ export interface Data {
   personId: number;
   person: Person;
 }
+
+interface Decimal {
+  valueOf(): string;
+}
+
+type JsonValue = string | number | boolean | { [key in string]: JsonValue } | Array<JsonValue> | null;

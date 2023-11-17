@@ -1,0 +1,6 @@
+generator typescriptInterfaces {
+  provider = "node generator.js"
+  output   = "generated.ts"
+}
+
+// TEST_INSERT_BASE_HERE
