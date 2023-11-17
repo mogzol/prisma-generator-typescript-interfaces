@@ -1,5 +1,5 @@
 // Complete example schema to generate during development. Uses ts-node to run the generator.
-// Run `npm run generate` to generate the typescript output.
+// To generate, run: `npm run generate` or `npx prisma generate --schema=prisma/example.prisma`
 
 datasource db {
   provider = "postgresql"
@@ -11,9 +11,9 @@ generator client {
 }
 
 generator typescriptInterfaces {
-  provider           = "node generator.js"
-  output             = "example.ts"
-  formatWithPrettier = true
+  provider = "node --loader ts-node/esm generator.ts"
+  output   = "example.ts"
+  prettier = true
 }
 
 enum Gender {

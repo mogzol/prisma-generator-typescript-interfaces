@@ -4,13 +4,13 @@ export interface Person {
   id: number;
   name: string;
   age: number;
-  email?: string;
+  email: string | null;
   gender: Gender;
   addressId: number;
   address: Address;
   friends: Person[];
   friendsOf: Person[];
-  data?: Data;
+  data: Data | null;
 }
 
 export interface Address {
@@ -33,15 +33,15 @@ export interface Data {
   dateField: Date;
   jsonField: JsonValue;
   bytesField: Buffer;
-  optionalStringField?: string;
-  optionalBooleanField?: boolean;
-  optionalIntField?: number;
-  optionalBigIntField?: bigint;
-  optionalFloatField?: number;
-  optionalDecimalField?: Decimal;
-  optionalDateField?: Date;
-  optionalJsonField?: JsonValue;
-  optionalBytesField?: Buffer;
+  optionalStringField: string | null;
+  optionalBooleanField: boolean | null;
+  optionalIntField: number | null;
+  optionalBigIntField: bigint | null;
+  optionalFloatField: number | null;
+  optionalDecimalField: Decimal | null;
+  optionalDateField: Date | null;
+  optionalJsonField: JsonValue | null;
+  optionalBytesField: Buffer | null;
   stringArrayField: string[];
   booleanArrayField: boolean[];
   intArrayField: number[];

@@ -8,13 +8,13 @@ export interface Person {
   id: number;
   name: string;
   age: number;
-  email?: string;
+  email: string | null;
   gender: Gender;
   addressId: number;
   address: Address;
   friends: Person[];
   friendsOf: Person[];
-  data?: Data;
+  data: Data | null;
 }
 
 export interface Address {
@@ -37,15 +37,15 @@ export interface Data {
   dateField: string;
   jsonField: JsonValue;
   bytesField: string;
-  optionalStringField?: string;
-  optionalBooleanField?: boolean;
-  optionalIntField?: number;
-  optionalBigIntField?: string;
-  optionalFloatField?: number;
-  optionalDecimalField?: string;
-  optionalDateField?: string;
-  optionalJsonField?: JsonValue;
-  optionalBytesField?: string;
+  optionalStringField: string | null;
+  optionalBooleanField: boolean | null;
+  optionalIntField: number | null;
+  optionalBigIntField: string | null;
+  optionalFloatField: number | null;
+  optionalDecimalField: string | null;
+  optionalDateField: string | null;
+  optionalJsonField: JsonValue | null;
+  optionalBytesField: string | null;
   stringArrayField: string[];
   booleanArrayField: boolean[];
   intArrayField: number[];

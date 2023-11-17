@@ -1,8 +1,6 @@
 import { DMMF, generatorHandler } from "@prisma/generator-helper";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
-import { promisify } from "node:util";
-import { exec } from "child_process";
 
 interface Config {
   enumType: "stringUnion" | "enum";
@@ -94,7 +92,7 @@ function getModelTs(
   const fields = modelData.fields
     .map(({ name, kind, type, isRequired, isList }) => {
       const getDefinition = (resolvedType: string) =>
-        `  ${name}${isRequired ? "" : "?"}: ${resolvedType}${isList ? "[]" : ""};`;
+        `  ${name}: ${resolvedType}${isList ? "[]" : ""}${!isRequired ? " | null" : ""};`;
 
       switch (kind) {
         case "scalar": {
@@ -159,7 +157,10 @@ generatorHandler({
 
     const datamodel = options.dmmf.datamodel;
     const enums = datamodel.enums;
-    const models = datamodel.models;
+
+    // For the purposes of this generator, models and types are equivalent
+    const models = [...datamodel.models, ...datamodel.types];
+
     const usedCustomTypes = new Set<keyof typeof CUSTOM_TYPES>();
 
     const enumNameMap = new Map<string, string>(
@@ -193,9 +194,5 @@ generatorHandler({
     const outputDir = dirname(outputFile);
     await mkdir(outputDir, { recursive: true });
     await writeFile(outputFile, ts);
-
-    if (config.prettier) {
-      await promisify(exec)(`npx prettier --write ${outputFile}`);
-    }
   },
 });
