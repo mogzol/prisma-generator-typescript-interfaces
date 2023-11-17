@@ -1,0 +1,77 @@
+datasource db {
+  provider = "postgresql"
+  url      = ""
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator typescriptInterfaces {
+  provider = "node --loader ts-node/esm generator.ts"
+  formatWithPrettier = true
+}
+
+enum Gender {
+  Male
+  Female
+  Other
+}
+
+model Person {
+  id        Int      @id @default(autoincrement())
+  name      String
+  age       Int
+  email     String?
+  gender    Gender
+  addressId Int
+  address   Address  @relation(fields: [addressId], references: [id])
+  friends   Person[] @relation("Friends")
+  friendsOf Person[] @relation("Friends")
+  data      Data?
+}
+
+model Address {
+  id           Int      @id
+  streetNumber Int
+  streetName   String
+  city         String
+  isBilling    Boolean
+  people       Person[]
+}
+
+model Data {
+  id                   String    @id @default(uuid()) @db.Uuid
+  stringField          String
+  booleanField         Boolean
+  intField             Int
+  bigIntField          BigInt
+  floatField           Float
+  decimalField         Decimal
+  dateField            DateTime
+  jsonField            Json
+  bytesField           Bytes
+
+  optionalStringField  String?
+  optionalBooleanField Boolean?
+  optionalIntField     Int?
+  optionalBigIntField  BigInt?
+  optionalFloatField   Float?
+  optionalDecimalField Decimal?
+  optionalDateField    DateTime?
+  optionalJsonField    Json?
+  optionalBytesField   Bytes?
+
+  stringArrayField     String[]
+  booleanArrayField    Boolean[]
+  intArrayField        Int[]
+  bigIntArrayField     BigInt[]
+  floatArrayField      Float[]
+  decimalArrayField    Decimal[]
+  dateArrayField       DateTime[]
+  jsonArrayField       Json[]
+  bytesArrayField      Bytes[]
+
+  personId             Int       @unique
+  person               Person    @relation(fields: [personId], references: [id])
+}

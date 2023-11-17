@@ -1,0 +1,36 @@
+{
+  "name": "prisma-generator-typescript-interfaces",
+  "version": "1.0.0",
+  "description": "Generate plain zero-dependency Typescript interfaces from Prisma schema",
+  "main": "generator.js",
+  "bin": {
+    "prisma-generator-typescript-interfaces": "generator.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm generator.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "keywords": [
+    "prisma",
+    "generator",
+    "typescript",
+    "interface",
+    "dto"
+  ],
+  "author": "Morgan Zolob",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/generator-helper": "^5.6.0"
+  },
+  "devDependencies": {
+    "@prisma/client": "^5.6.0",
+    "prettier": "^3.1.0",
+    "prisma": "^5.6.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
