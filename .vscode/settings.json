@@ -8,7 +8,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "cSpell.words": ["datamodel", "dmmf"],
+  "cSpell.words": ["datamodel", "datasource", "dmmf"],
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   }

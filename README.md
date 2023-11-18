@@ -4,9 +4,9 @@
 
 ## Motivation
 
-The generated Prisma client types are generally sufficient for most use cases, however there are some some scenarios where using them is not convenient or possible, due to the fact that they rely on both the `@prisma/client` package and on the client generated from your prisma schema. That is where this generator comes in to play. It generates a zero-dependency Typescript file containing type definitions for all your models. Zero-dependency in this case means that the file does not import any other packages, and can be used standalone in any Typescript app. By default the definitions are [type compatible](https://www.typescriptlang.org/docs/handbook/type-compatibility.html) with the Prisma client types, however this can be customized via the [options](#options), see below for more info.
+While Prisma client's generated types are sufficient for most use cases, there are some some scenarios where using them is not convenient or possible, due to the fact that they rely on both the `@prisma/client` package and on the client generated from your Prisma schema. That is where this generator comes into play. It generates a zero-dependency Typescript file containing type definitions for all your models. Zero-dependency in this case means that the file does not import any other packages, and can be used standalone in any Typescript app. By default the definitions are [type compatible](https://www.typescriptlang.org/docs/handbook/type-compatibility.html) with the Prisma client types, however this can be customized via the [options](#options), see below for more info.
 
-As example of why this is useful, say have an API which uses Prisma and responds with models from your DB, and you want to create a DTO package with Typescript definitions for all the data your API returns. You wouldn't really want to include your entire generated Prisma client in that package, and you don't want to require users to install `@prisma/client` just to use your DTO. So instead, you can use this generator to create a zero-dependency typescript file containing definitions for all your models, and then use that in your DTO package.
+As example of why this is useful, say you have an API which uses Prisma and responds with models from your DB, and you want to create a DTO package with Typescript definitions for all the data your API returns. You wouldn't really want to include your entire generated Prisma client in that package, and you don't want to require users to install `@prisma/client` just to use your DTO. So instead, you can use this generator to create a zero-dependency Typescript file containing definitions for all your models, and then use that in your DTO package.
 
 ## Usage
 
@@ -30,7 +30,7 @@ And finally generate your Prisma schema:
 npx prisma generate
 ```
 
-By default that will output the Typescript interface definitions to a file called `interfaces.ts` in your `prisma` folder, this can be changed by specifying the `output` option. As mentioned above, by default the generated types will be [type compatible](https://www.typescriptlang.org/docs/handbook/type-compatibility.html) with the Prisma client types. If you instead wanted to generate types matching `JSON.stringify`-ed versions of your models, you will need to use some of the options to change the output behavior:
+By default that will output the Typescript interface definitions to a file called `interfaces.ts` in your `prisma` folder, this can be changed by specifying the `output` option. As mentioned above, by default the generated types will be [type compatible](https://www.typescriptlang.org/docs/handbook/type-compatibility.html) with the Prisma client types. If you instead want to generate types matching the `JSON.stringify`-ed versions of your models, you will need to change some of the options, like so:
 
 ```prisma
 generator typescriptInterfaces {
@@ -42,6 +42,8 @@ generator typescriptInterfaces {
 }
 ```
 
+Note that `bigint` types don't have a default `toJSON` method, so the above assumes that you are converting them to strings somewhere along the line.
+
 ## Options
 
 | **Option**        |                        **Type**                        |    **Default**    | **Description**                                                                                                                                                                                                  |
@@ -49,7 +51,7 @@ generator typescriptInterfaces {
 | output            |                        `string`                        | `"interfaces.ts"` | The output location for the generated Typescript interfaces.                                                                                                                                                     |
 | enumPrefix        |                        `string`                        |       `""`        | Prefix to add to enum types.                                                                                                                                                                                     |
 | enumSuffix        |                        `string`                        |       `""`        | Suffix to add to enum types.                                                                                                                                                                                     |
-| modelPrefix       |                        `string`                        |       `""`        | Prefix to add to enum types.                                                                                                                                                                                     |
+| modelPrefix       |                        `string`                        |       `""`        | Prefix to add to model types.                                                                                                                                                                                    |
 | modelSuffix       |                        `string`                        |       `""`        | Suffix to add to model types.                                                                                                                                                                                    |
 | typePrefix        |                        `string`                        |       `""`        | Prefix to add to [type](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-composite-types) types (mongodb only).                                                                  |
 | typeSuffix        |                        `string`                        |       `""`        | Suffix to add to [type](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-composite-types) types (mongodb only).                                                                  |
@@ -63,7 +65,7 @@ generator typescriptInterfaces {
 
 ## Example
 
-Here is an example of a configuration which generates two separate outputs, `interfaces.ts` with types compatible with the Prisma client types, and a second `json-interfaces.ts` file with types matching the output of `JSON.stringify` when run on the models. Both files are output to the `src/dto` folder (which will be created if it doesn't exist) and are formatted using Prettier. The models in `json-interfaces.ts` get a `Json` suffix attached to them.
+Here is an example of a configuration which generates two separate outputs, `interfaces.ts` with types compatible with the Prisma client types, and a second `json-interfaces.ts` file with types matching the output of `JSON.stringify` when run on the models. Both files are output to the `src/dto` folder (which will be created if it doesn't exist) and are formatted using Prettier. The models in `json-interfaces.ts` also get a `Json` suffix attached to them.
 
 #### Input
 
@@ -158,7 +160,7 @@ model Data {
   jsonArrayField Json[]
   bytesArrayField Bytes[]
   enumArrayField Fruits[]
-  relationArray RelationC[]
+  relationArrayField RelationC[]
 }
 ```
 
@@ -224,7 +226,7 @@ export interface Data {
   jsonArrayField: JsonValue[];
   bytesArrayField: Buffer[];
   enumArrayField: Fruits[];
-  relationArray?: RelationC[];
+  relationArrayField?: RelationC[];
 }
 
 type Decimal = { valueOf(): string };
@@ -298,7 +300,7 @@ export interface DataJson {
   jsonArrayField: JsonValue[];
   bytesArrayField: BufferObject[];
   enumArrayField: Fruits[];
-  relationArray?: RelationCJson[];
+  relationArrayField?: RelationCJson[];
 }
 
 type JsonValue =
@@ -320,11 +322,11 @@ Please report any issues to the [issues](https://github.com/mogzol/prisma-genera
 
 ## Developing
 
-As this is a fairly simple generator, all the code is contained within the `generator.ts` file. You can build the generator by running `npm install` then `npm run build`.
+All the code for this generator is contained within the `generator.ts` file. You can build the generator by running `npm install` then `npm run build`.
 
 ### Tests
 
-You can run tests with `npm run test`. Tests are run using a custom script, see `test.ts` for details. You can add new tests by placing a prisma schema and the expected output in a folder under the `tests` directory, you may want to look at the `tests/no-options` test as an example.
+You can run tests with `npm run test`. Tests are run using a custom script, see `test.ts` for details. You can add new tests by placing a Prisma schema and the expected output in a folder under the `tests` directory, you may want to look at the `tests/no-options` test as an example.
 
 You can run specific tests by passing them as arguments to the test command:
 
@@ -332,7 +334,7 @@ You can run specific tests by passing them as arguments to the test command:
 npm run test -- buffer-array-type mongo-types required-relations
 ```
 
-When a test fails, you can see the generated output in a `__TEST_TMP__` folder inside the test's directory. Compare this with the expected output to see why it failed.
+When a test fails, you can see the generated output in the `__TEST_TMP__` folder inside that test's directory. Compare this with the expected output to see why it failed.
 
 By default the test runner will quit when it encounters it's first failure. If you want it to continue after failures, use the `-c` (or `--continue`) option:
 
