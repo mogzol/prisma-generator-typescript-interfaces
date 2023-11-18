@@ -3,17 +3,17 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 
 interface Config {
-  enumType: "stringUnion" | "enum";
   enumPrefix: string;
   enumSuffix: string;
   modelPrefix: string;
   modelSuffix: string;
   typePrefix: string;
   typeSuffix: string;
-  dateType: "string" | "Date";
-  bigIntType: "string" | "bigint";
-  decimalType: "string" | "Decimal";
-  bytesType: "string" | "Buffer" | "BufferObject" | "number[]";
+  enumType: "stringUnion" | "enum";
+  dateType: "Date" | "string";
+  bigIntType: "bigint" | "string" | "number";
+  decimalType: "Decimal" | "string";
+  bytesType: "Buffer" | "BufferObject" | "string" | "number[]";
   optionalRelations: boolean;
   prettier: boolean;
 }
@@ -45,16 +45,16 @@ function validateConfig(config: Config) {
   if (!["stringUnion", "enum"].includes(config.enumType)) {
     errors.push(`Invalid enumType: ${config.enumType}`);
   }
-  if (!["string", "Date"].includes(config.dateType)) {
+  if (!["Date", "string"].includes(config.dateType)) {
     errors.push(`Invalid dateType: ${config.dateType}`);
   }
-  if (!["string", "bigint"].includes(config.bigIntType)) {
+  if (!["bigint", "string", "number"].includes(config.bigIntType)) {
     errors.push(`Invalid bigIntType: ${config.bigIntType}`);
   }
-  if (!["string", "Decimal"].includes(config.decimalType)) {
+  if (!["Decimal", "string"].includes(config.decimalType)) {
     errors.push(`Invalid decimalType: ${config.decimalType}`);
   }
-  if (!["string", "Buffer", "BufferObject", "number[]"].includes(config.bytesType)) {
+  if (!["Buffer", "BufferObject", "string", "number[]"].includes(config.bytesType)) {
     errors.push(`Invalid bytesType: ${config.bytesType}`);
   }
   if (errors.length > 0) {
@@ -150,13 +150,13 @@ generatorHandler({
   async onGenerate(options) {
     const baseConfig = options.generator.config;
     const config: Config = {
-      enumType: "stringUnion",
       enumPrefix: "",
       enumSuffix: "",
       modelPrefix: "",
       modelSuffix: "",
       typePrefix: "",
       typeSuffix: "",
+      enumType: "stringUnion",
       dateType: "Date",
       bigIntType: "bigint",
       decimalType: "Decimal",

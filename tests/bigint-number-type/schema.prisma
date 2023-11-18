@@ -1,0 +1,6 @@
+generator typescriptInterfaces {
+  provider   = "node generator.js"
+  bigIntType = "number"
+}
+
+// #INSERT base.postgres.prisma

@@ -8,7 +8,7 @@
  *   npm run test -- custom-output no-options prettier
  *
  * If you want to run all tests even if some fail, pass the --continue or -c flag:
- *  npm run test -- -c
+ *   npm run test -- -c
  */
 
 import { exec } from "node:child_process";
@@ -19,8 +19,8 @@ import path from "node:path";
 
 const TEMP_TEST_DIRNAME = "__TEST_TMP__";
 const BASE_REPLACE_REGEX = /^\/\/ ?#INSERT base\.([a-z]+)\.prisma$/gm;
-const RED = "\x1b[1m\x1b[41m\x1b[97m";
-const GREEN = "\x1b[1m\x1b[42m\x1b[97m";
+const RED = "\x1b[1;97;41m";
+const GREEN = "\x1b[1;102;30m";
 const RESET = "\x1b[0m";
 
 const execAsync = promisify(exec);
