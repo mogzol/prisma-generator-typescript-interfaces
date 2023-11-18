@@ -1,6 +1,6 @@
 # Prisma Typescript Interfaces Generator
 
-`prisma-generator-typescript-interfaces` - A [Prisma generator](https://www.prisma.io/docs/concepts/components/prisma-schema/generators) which creates zero-dependency Typescript interfaces from Prisma schema.
+[`prisma-generator-typescript-interfaces`](https://www.npmjs.com/package/prisma-generator-typescript-interfaces) - A [Prisma generator](https://www.prisma.io/docs/concepts/components/prisma-schema/generators) which creates zero-dependency Typescript interfaces from Prisma schema.
 
 ## Motivation
 
