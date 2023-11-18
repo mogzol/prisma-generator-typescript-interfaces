@@ -1,6 +1,0 @@
-generator typescriptInterfaces {
-  provider          = "node generator.js"
-  optionalRelations = false
-}
-
-// #INSERT base.postgres.prisma

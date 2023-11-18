@@ -4,11 +4,8 @@
  * test folders). If a test is expected to fail, the expected error message should be put in an
  * "expected-error.txt" file in the relevant test folder.
  *
- * You can run specific tests by passing the one(s) you want to run as arguments to this script:
- *   npm run test -- custom-output no-options prettier
- *
- * If you want to run all tests even if some fail, pass the --continue or -c flag:
- *   npm run test -- -c
+ * You can run specific tests by passing them as arguments to this script:
+ *   npm run test -- options-behavior validation-errors
  */
 
 import { exec } from "node:child_process";
@@ -18,13 +15,11 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const TEMP_TEST_DIRNAME = "__TEST_TMP__";
-const BASE_REPLACE_REGEX = /^\/\/ ?#INSERT base\.([a-z]+)\.prisma$/gm;
 const RED = "\x1b[1;97;41m";
 const GREEN = "\x1b[1;102;30m";
 const RESET = "\x1b[0m";
 
 const execAsync = promisify(exec);
-const readFile = async (path: string) => fs.readFile(path, { encoding: "utf-8" });
 const trimMultiLine = (s: string) =>
   s
     .trim()
@@ -32,81 +27,70 @@ const trimMultiLine = (s: string) =>
     .map((l) => l.trim())
     .join("\n");
 
-let testFilters = process.argv.slice(2);
-
-// Continue on errors if --continue or -c is passed
-let continueOnError = false;
-let hasErrors = false;
-if (testFilters.some((f) => f === "--continue" || f === "-c")) {
-  continueOnError = true;
-  testFilters = testFilters.filter((f) => f !== "--continue" && f !== "-c");
+async function readFile(path: string) {
+  try {
+    return await fs.readFile(path, { encoding: "utf-8" });
+  } catch (e) {
+    if (e instanceof Error && "code" in e && e.code === "ENOENT") {
+      return null; // Return null when file is not found
+    }
+    throw e;
+  }
 }
 
-const testsEntries = await fs.readdir("tests", { withFileTypes: true });
-const tests = testsEntries
+async function readDir(path: string) {
+  try {
+    return await fs.readdir(path, { withFileTypes: true });
+  } catch (e) {
+    if (e instanceof Error && "code" in e && e.code === "ENOENT") {
+      return []; // Return empty array when dir not found
+    }
+    throw e;
+  }
+}
+
+const testFilters = process.argv.slice(2);
+
+const tests = (await readDir("tests"))
   .filter((d) => d.isDirectory() && (!testFilters.length || testFilters.includes(d.name)))
   .map((d) => path.join(d.path, d.name));
 
-// Common schemas used by multiple tests
-const baseSchemas = new Map(
-  await Promise.all(
-    testsEntries
-      .filter((f) => f.isFile() && /^base\.[a-z]+\.prisma$/.test(f.name))
-      .map<Promise<[string, string]>>((f) =>
-        readFile(path.join(f.path, f.name)).then((c) => [f.name, c]),
-      ),
-  ),
-);
+if (!tests.length) {
+  console.error("No tests found!");
+  process.exit(1);
+}
 
 // Get the length of the longest test name, so we can pad the output
 const longestName = Math.max(...tests.map((t) => t.length));
 
-console.log("Running tests...");
+console.log("\nRunning tests...");
+
+let hasErrors = false;
 
 for (const test of tests) {
   try {
     process.stdout.write(`  ${test}${" ".repeat(longestName - test.length + 2)}`);
 
-    const schema = (await readFile(path.join(test, "schema.prisma"))).replaceAll(
-      BASE_REPLACE_REGEX,
-      (_, baseName) => {
-        const baseSchema = baseSchemas.get(`base.${baseName}.prisma`);
-        if (!baseSchema) {
-          throw new Error(`Unknown base schema: ${baseName}`);
-        }
-        return baseSchema;
-      },
-    );
-
-    let expectedError: string | null; // Text of expected stderr after a non-zero exit code
-    let expectedFiles: Map<string, string> | null; // Map of file name to expected contents.
-
-    try {
-      expectedError = await readFile(path.join(test, "expected-error.txt"));
-    } catch {
-      expectedError = null;
+    const schema = await readFile(path.join(test, "schema.prisma"));
+    if (!schema) {
+      throw new Error(`Test ${test} has no schema.prisma!`);
     }
 
-    try {
-      expectedFiles = new Map(
-        await Promise.all<[string, string]>(
-          (await fs.readdir(path.join(test, "expected"))).map<Promise<[string, string]>>(
-            async (f) => {
-              const contents = await readFile(path.join(test, "expected", f));
-              return [f, contents];
-            },
-          ),
-        ),
-      );
-    } catch {
-      expectedFiles = null;
+    let expectedError = await readFile(path.join(test, "expected-error.txt"));
+
+    const expectedFiles: Map<string, string | null> = new Map();
+    for (const entry of await readDir(path.join(test, "expected"))) {
+      if (entry.isFile()) {
+        expectedFiles.set(entry.name, await readFile(path.join(test, "expected", entry.name)));
+      }
     }
 
-    if (!expectedError && !expectedFiles) {
-      throw new Error(`Test ${test} has no expected output!`);
+    if (expectedFiles.size === 0 && !expectedError) {
+      throw new Error(`Test ${test} has no expected files or errors!`);
     }
 
     const testDir = path.join(test, TEMP_TEST_DIRNAME);
+    await rimraf(testDir); // Ensure test dir is clean before running
     await fs.mkdir(testDir, { recursive: true });
     await fs.writeFile(path.join(testDir, "schema.prisma"), schema);
 
@@ -128,28 +112,47 @@ for (const test of tests) {
       throw new Error("Expected error did not occur!");
     }
 
-    if (expectedFiles) {
-      for (const [filename, contents] of expectedFiles.entries()) {
-        const filePath = path.join(testDir, filename);
-        const actualContents = await readFile(filePath);
-        if (actualContents !== contents) {
-          throw new Error(
-            `Generated ${filename} does not match expected contents! Check the output in ${filePath}`,
-          );
-        }
+    const errors: string[] = [];
+    const uncheckedFileNames = new Set(expectedFiles.keys());
+
+    for (const entry of await readDir(testDir)) {
+      if (!entry.isFile() || entry.name === "schema.prisma") {
+        continue;
       }
+
+      uncheckedFileNames.delete(entry.name);
+
+      const filePath = path.join(testDir, entry.name);
+      const fileContents = await readFile(filePath);
+      const expectedContents = expectedFiles.get(entry.name);
+
+      if (!expectedContents) {
+        errors.push(`Unexpected file ${entry.name} in test output! See ${filePath}`);
+        continue;
+      }
+
+      if (fileContents !== expectedContents) {
+        errors.push(
+          `Generated ${entry.name} does not match expected contents! Check the output in ${filePath}`,
+        );
+      }
+    }
+
+    for (const file of uncheckedFileNames) {
+      errors.push(`Expected file ${file} was not generated!`);
+    }
+
+    if (errors.length) {
+      throw new Error("Errors:\n" + errors.map((e) => ` - ${e}`).join("\n"));
     }
 
     process.stdout.write(GREEN + " PASS " + RESET + "\n");
 
-    await rimraf(testDir);
+    await rimraf(testDir); // Clean up test dir on success
   } catch (e) {
     process.stdout.write(RED + " FAIL " + RESET + "\n\n");
     console.error((e as Error).message, "\n");
     hasErrors = true;
-    if (!continueOnError) {
-      process.exit(1);
-    }
   }
 }
 

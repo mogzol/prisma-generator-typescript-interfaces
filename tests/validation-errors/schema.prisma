@@ -1,5 +1,9 @@
+// ========================
+// Generator Tests
+// ========================
+
 generator typescriptInterfaces {
-  provider    = "node generator.js"
+  provider    = "node --loader ts-node/esm generator.ts"
   enumType    = "incorrect"
   dateType    = "wrong"
   bigIntType  = "values"
@@ -8,4 +12,15 @@ generator typescriptInterfaces {
   prettier    = "bad"
 }
 
-// #INSERT base.postgres.prisma
+// ========================
+// Prisma Schema
+// ========================
+
+datasource db {
+  provider = "postgresql"
+  url      = ""
+}
+
+model User {
+  id Int @id
+}

@@ -1,3 +1,5 @@
+// This is a custom header
+
 export type Gender = "Male" | "Female" | "Other";
 
 export type DataTest = "Apple" | "Banana" | "Orange" | "Pear";
@@ -29,7 +31,7 @@ export interface Data {
   stringField: string;
   booleanField: boolean;
   intField: number;
-  bigIntField: number;
+  bigIntField: bigint;
   floatField: number;
   decimalField: Decimal;
   dateField: Date;
@@ -39,7 +41,7 @@ export interface Data {
   optionalStringField: string | null;
   optionalBooleanField: boolean | null;
   optionalIntField: number | null;
-  optionalBigIntField: number | null;
+  optionalBigIntField: bigint | null;
   optionalFloatField: number | null;
   optionalDecimalField: Decimal | null;
   optionalDateField: Date | null;
@@ -49,7 +51,7 @@ export interface Data {
   stringArrayField: string[];
   booleanArrayField: boolean[];
   intArrayField: number[];
-  bigIntArrayField: number[];
+  bigIntArrayField: bigint[];
   floatArrayField: number[];
   decimalArrayField: Decimal[];
   dateArrayField: Date[];

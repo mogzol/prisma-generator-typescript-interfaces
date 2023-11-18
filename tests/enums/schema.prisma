@@ -1,6 +1,0 @@
-generator typescriptInterfaces {
-  provider = "node generator.js"
-  enumType = "enum"
-}
-
-// #INSERT base.postgres.prisma

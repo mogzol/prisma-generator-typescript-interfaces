@@ -46,22 +46,23 @@ Note that `bigint` types don't have a default `toJSON` method, so the above assu
 
 ## Options
 
-| **Option**        |                        **Type**                        |    **Default**    | **Description**                                                                                                                                                                                                  |
-| ----------------- | :----------------------------------------------------: | :---------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| output            |                        `string`                        | `"interfaces.ts"` | The output location for the generated Typescript interfaces.                                                                                                                                                     |
-| enumPrefix        |                        `string`                        |       `""`        | Prefix to add to enum types.                                                                                                                                                                                     |
-| enumSuffix        |                        `string`                        |       `""`        | Suffix to add to enum types.                                                                                                                                                                                     |
-| modelPrefix       |                        `string`                        |       `""`        | Prefix to add to model types.                                                                                                                                                                                    |
-| modelSuffix       |                        `string`                        |       `""`        | Suffix to add to model types.                                                                                                                                                                                    |
-| typePrefix        |                        `string`                        |       `""`        | Prefix to add to [type](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-composite-types) types (mongodb only).                                                                  |
-| typeSuffix        |                        `string`                        |       `""`        | Suffix to add to [type](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-composite-types) types (mongodb only).                                                                  |
-| enumType          |               `"stringUnion" \| "enum"`                |  `"stringUnion"`  | Controls how enums are generated. `"enum"` will create Typescript enums, `"stringUnion"` will create union types with all the enum values.                                                                       |
-| dateType          |                  `"Date" \| "string"`                  |     `"Date"`      | The type to use for DateTime model fields.                                                                                                                                                                       |
-| bigIntType        |           `"bigint" \| "string" \| "number"`           |    `"bigint"`     | The type to use for BigInt model fields.                                                                                                                                                                         |
-| decimalType       |                `"Decimal" \| "string"`                 |    `"Decimal"`    | The type to use for Decimal model fields. Note that the `Decimal` type here is just an interface with a `getValue()` function. You will need to cast to an actual Decimal type if you want to use other methods. |
-| bytesType         | `"Buffer" \| "BufferObject" \| "string" \| "number[]"` |    `"Buffer"`     | The type to use for Bytes model fields. `BufferObject` is a type definition which matches the output of `Buffer.toJSON()`, which is called when running `JSON.stringify()` on a Buffer.                          |
-| optionalRelations |                       `boolean`                        |      `true`       | Controls whether model relation fields are optional or not. If `true`, all model relation fields will use `?:` in the field definition.                                                                          |
-| prettier          |                       `boolean`                        |      `false`      | Formats the output using Prettier. Setting this to `true` requires that the `prettier` package is available. [Prettier settings files](https://prettier.io/docs/en/configuration.html) will be respected.        |
+| **Option**        |                        **Type**                        |                                **Default**                                 | **Description**                                                                                                                                                                                                  |
+| ----------------- | :----------------------------------------------------: | :------------------------------------------------------------------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| output            |                        `string`                        |                             `"interfaces.ts"`                              | The output location for the generated Typescript interfaces.                                                                                                                                                     |
+| enumPrefix        |                        `string`                        |                                    `""`                                    | Prefix to add to enum types.                                                                                                                                                                                     |
+| enumSuffix        |                        `string`                        |                                    `""`                                    | Suffix to add to enum types.                                                                                                                                                                                     |
+| modelPrefix       |                        `string`                        |                                    `""`                                    | Prefix to add to model types.                                                                                                                                                                                    |
+| modelSuffix       |                        `string`                        |                                    `""`                                    | Suffix to add to model types.                                                                                                                                                                                    |
+| typePrefix        |                        `string`                        |                                    `""`                                    | Prefix to add to [type](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-composite-types) types (mongodb only).                                                                  |
+| typeSuffix        |                        `string`                        |                                    `""`                                    | Suffix to add to [type](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-composite-types) types (mongodb only).                                                                  |
+| headerComment     |                        `string`                        | `"This file was auto-generated by prisma-generator-typescript-interfaces"` | Sets the header comment added to the top of the generated file. Set this to an empty string to disable the header comment. Supports multiple lines with `"\n"`.                                                  |
+| enumType          |               `"stringUnion" \| "enum"`                |                              `"stringUnion"`                               | Controls how enums are generated. `"enum"` will create Typescript enums, `"stringUnion"` will create union types with all the enum values.                                                                       |
+| dateType          |                  `"Date" \| "string"`                  |                                  `"Date"`                                  | The type to use for DateTime model fields.                                                                                                                                                                       |
+| bigIntType        |           `"bigint" \| "string" \| "number"`           |                                 `"bigint"`                                 | The type to use for BigInt model fields.                                                                                                                                                                         |
+| decimalType       |                `"Decimal" \| "string"`                 |                                `"Decimal"`                                 | The type to use for Decimal model fields. Note that the `Decimal` type here is just an interface with a `getValue()` function. You will need to cast to an actual Decimal type if you want to use other methods. |
+| bytesType         | `"Buffer" \| "BufferObject" \| "string" \| "number[]"` |                                 `"Buffer"`                                 | The type to use for Bytes model fields. `BufferObject` is a type definition which matches the output of `Buffer.toJSON()`, which is called when running `JSON.stringify()` on a Buffer.                          |
+| optionalRelations |                       `boolean`                        |                                   `true`                                   | Controls whether model relation fields are optional or not. If `true`, all model relation fields will use `?:` in the field definition.                                                                          |
+| prettier          |                       `boolean`                        |                                  `false`                                   | Formats the output using Prettier. Setting this to `true` requires that the `prettier` package is available. [Prettier settings files](https://prettier.io/docs/en/configuration.html) will be respected.        |
 
 ## Example
 
@@ -169,9 +170,11 @@ model Data {
 #### Output
 
 <details>
-<summary>src/interfaces.ts</summary>
+<summary>src/dto/interfaces.ts</summary>
 
 ```typescript
+// This file was auto-generated by prisma-generator-typescript-interfaces
+
 export type Fruits = "Apple" | "Banana" | "Orange" | "Pear";
 
 export interface RelationA {
@@ -243,9 +246,11 @@ type JsonValue =
 </details>
 
 <details>
-<summary>src/json-interfaces.ts</summary>
+<summary>src/dto/json-interfaces.ts</summary>
 
 ```typescript
+// This file was auto-generated by prisma-generator-typescript-interfaces
+
 export type Fruits = "Apple" | "Banana" | "Orange" | "Pear";
 
 export interface RelationAJson {
@@ -326,20 +331,14 @@ All the code for this generator is contained within the `generator.ts` file. You
 
 ### Tests
 
-You can run tests with `npm run test`. Tests are run using a custom script, see `test.ts` for details. You can add new tests by placing a Prisma schema and the expected output in a folder under the `tests` directory, you may want to look at the `tests/no-options` test as an example.
+You can run tests with `npm run test`. Tests are run using a custom script, see `test.ts` for details. You can add new tests by placing a Prisma schema and the expected output in a folder under the `tests` directory, you may want to look at the `tests/options-behavior` test as an example.
 
 You can run specific tests by passing them as arguments to the test command:
 
 ```
-npm run test -- buffer-array-type mongo-types required-relations
+npm run test -- options-behavior validation-errors
 ```
 
 When a test fails, you can see the generated output in the `__TEST_TMP__` folder inside that test's directory. Compare this with the expected output to see why it failed.
-
-By default the test runner will quit when it encounters it's first failure. If you want it to continue after failures, use the `-c` (or `--continue`) option:
-
-```
-npm run test -- -c
-```
 
 Please ensure all tests are passing and that the code is properly linted (`npm run lint`) before submitting a PR, thanks!

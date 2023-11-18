@@ -1,6 +1,0 @@
-generator typescriptInterfaces {
-  provider  = "node generator.js"
-  bytesType = "BufferObject"
-}
-
-// #INSERT base.postgres.prisma

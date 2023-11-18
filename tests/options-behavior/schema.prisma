@@ -1,0 +1,177 @@
+// These tests cover most of the generator's options
+
+// ========================
+// Generator Tests
+// ========================
+
+generator noOptions {
+  provider = "node --loader ts-node/esm generator.ts"
+}
+
+generator customOutput {
+  provider = "node --loader ts-node/esm generator.ts"
+  output   = "customOutput.ts"
+}
+
+generator customHeader {
+  provider      = "node --loader ts-node/esm generator.ts"
+  output        = "customHeader.ts"
+  headerComment = "This is a custom header"
+}
+
+generator noHeader {
+  provider      = "node --loader ts-node/esm generator.ts"
+  output        = "noHeader.ts"
+  headerComment = ""
+}
+
+generator multilineHeader {
+  provider      = "node --loader ts-node/esm generator.ts"
+  output        = "multilineHeader.ts"
+  headerComment = "This is a multiline header\nwith a second line\n  and a third line indented\nand emoji 🎉"
+}
+
+generator formatPrettier {
+  provider = "node --loader ts-node/esm generator.ts"
+  output   = "formatPrettier.ts"
+  prettier = true
+}
+
+generator requiredRelations {
+  provider          = "node --loader ts-node/esm generator.ts"
+  output            = "requiredRelations.ts"
+  optionalRelations = false
+}
+
+generator prefixSuffix {
+  provider    = "node --loader ts-node/esm generator.ts"
+  output      = "prefixSuffix.ts"
+  enumPrefix  = "enum"
+  enumSuffix  = "Enum"
+  modelPrefix = "model"
+  modelSuffix = "Model"
+}
+
+generator stringTypes {
+  provider    = "node --loader ts-node/esm generator.ts"
+  output      = "stringTypes.ts"
+  dateType    = "string"
+  bigIntType  = "string"
+  decimalType = "string"
+  bytesType   = "string"
+}
+
+generator bytesNumberArray {
+  provider  = "node --loader ts-node/esm generator.ts"
+  output    = "bytesNumberArray.ts"
+  bytesType = "number[]"
+}
+
+generator bytesBufferObject {
+  provider  = "node --loader ts-node/esm generator.ts"
+  output    = "bytesBufferObject.ts"
+  bytesType = "BufferObject"
+}
+
+generator bigintNumber {
+  provider   = "node --loader ts-node/esm generator.ts"
+  output     = "bigintNumber.ts"
+  bigIntType = "number"
+}
+
+generator enumType {
+  provider = "node --loader ts-node/esm generator.ts"
+  output   = "enumType.ts"
+  enumType = "enum"
+}
+
+generator enumTypeSuffixPrefix {
+  provider   = "node --loader ts-node/esm generator.ts"
+  output     = "enumTypeSuffixPrefix.ts"
+  enumType   = "enum"
+  enumPrefix = "e"
+  enumSuffix = "Enum"
+}
+
+// ========================
+// Prisma Schema
+// ========================
+
+datasource db {
+  provider = "postgresql"
+  url      = ""
+}
+
+enum Gender {
+  Male
+  Female
+  Other
+}
+
+enum DataTest {
+  Apple
+  Banana
+  Orange
+  Pear
+}
+
+model Person {
+  id        Int      @id @default(autoincrement())
+  name      String
+  age       Int
+  email     String?
+  gender    Gender
+  addressId Int
+  address   Address  @relation(fields: [addressId], references: [id])
+  friends   Person[] @relation("Friends")
+  friendsOf Person[] @relation("Friends")
+  data      Data?
+}
+
+model Address {
+  id           Int      @id
+  streetNumber Int
+  streetName   String
+  city         String
+  isBilling    Boolean
+  people       Person[]
+}
+
+model Data {
+  id           String   @id @default(uuid()) @db.Uuid
+  stringField  String
+  booleanField Boolean
+  intField     Int
+  bigIntField  BigInt
+  floatField   Float
+  decimalField Decimal
+  dateField    DateTime
+  jsonField    Json
+  bytesField   Bytes
+  enumField    DataTest
+
+  optionalStringField  String?
+  optionalBooleanField Boolean?
+  optionalIntField     Int?
+  optionalBigIntField  BigInt?
+  optionalFloatField   Float?
+  optionalDecimalField Decimal?
+  optionalDateField    DateTime?
+  optionalJsonField    Json?
+  optionalBytesField   Bytes?
+  optionalEnumField    DataTest?
+
+  stringArrayField  String[]
+  booleanArrayField Boolean[]
+  intArrayField     Int[]
+  bigIntArrayField  BigInt[]
+  floatArrayField   Float[]
+  decimalArrayField Decimal[]
+  dateArrayField    DateTime[]
+  jsonArrayField    Json[]
+  bytesArrayField   Bytes[]
+  enumArrayField    DataTest[]
+
+  personId Int    @unique
+  person   Person @relation(fields: [personId], references: [id])
+}

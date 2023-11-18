@@ -1,13 +1,23 @@
+// Test against a basic Prisma schema which does not use any types requiring custom type definitions
+// in the output (like Decimal or Json), to ensure that such definitions are omitted.
+
+// ========================
+// Generator Tests
+// ========================
+
 generator typescriptInterfaces {
-  provider = "node generator.js"
+  provider = "node --loader ts-node/esm generator.ts"
 }
+
+// ========================
+// Prisma Schema
+// ========================
 
 datasource db {
   provider = "postgresql"
   url      = ""
 }
 
-// Basic model which does not use custom types such as Json or Decimal
 model User {
   id        String   @id @default(cuid())
   name      String

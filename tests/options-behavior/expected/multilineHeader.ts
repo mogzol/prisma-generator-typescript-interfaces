@@ -1,3 +1,8 @@
+// This is a multiline header
+// with a second line
+//   and a third line indented
+// and emoji 🎉
+
 export type Gender = "Male" | "Female" | "Other";
 
 export type DataTest = "Apple" | "Banana" | "Orange" | "Pear";
@@ -29,35 +34,37 @@ export interface Data {
   stringField: string;
   booleanField: boolean;
   intField: number;
-  bigIntField: string;
+  bigIntField: bigint;
   floatField: number;
-  decimalField: string;
-  dateField: string;
+  decimalField: Decimal;
+  dateField: Date;
   jsonField: JsonValue;
-  bytesField: string;
+  bytesField: Buffer;
   enumField: DataTest;
   optionalStringField: string | null;
   optionalBooleanField: boolean | null;
   optionalIntField: number | null;
-  optionalBigIntField: string | null;
+  optionalBigIntField: bigint | null;
   optionalFloatField: number | null;
-  optionalDecimalField: string | null;
-  optionalDateField: string | null;
+  optionalDecimalField: Decimal | null;
+  optionalDateField: Date | null;
   optionalJsonField: JsonValue | null;
-  optionalBytesField: string | null;
+  optionalBytesField: Buffer | null;
   optionalEnumField: DataTest | null;
   stringArrayField: string[];
   booleanArrayField: boolean[];
   intArrayField: number[];
-  bigIntArrayField: string[];
+  bigIntArrayField: bigint[];
   floatArrayField: number[];
-  decimalArrayField: string[];
-  dateArrayField: string[];
+  decimalArrayField: Decimal[];
+  dateArrayField: Date[];
   jsonArrayField: JsonValue[];
-  bytesArrayField: string[];
+  bytesArrayField: Buffer[];
   enumArrayField: DataTest[];
   personId: number;
   person?: Person;
 }
+
+type Decimal = { valueOf(): string };
 
 type JsonValue = string | number | boolean | { [key in string]?: JsonValue } | Array<JsonValue> | null;

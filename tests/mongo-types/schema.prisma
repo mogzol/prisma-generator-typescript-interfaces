@@ -1,5 +1,67 @@
-generator typescriptInterfaces {
-  provider = "node generator.js"
+// Test against mongodb schema to allow testing composite types
+// https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-composite-types
+
+// ========================
+// Generator Tests
+// ========================
+
+generator mongoTypes {
+  provider = "node --loader ts-node/esm generator.ts"
+  output   = "mongoTypes.ts"
 }
 
-// #INSERT base.mongo.prisma
+generator prefixSuffix {
+  provider   = "node --loader ts-node/esm generator.ts"
+  output     = "prefixSuffix.ts"
+  typePrefix = "type"
+  typeSuffix = "Type"
+}
+
+// ========================
+// Prisma Schema
+// ========================
+
+datasource db {
+  provider = "mongodb"
+  url      = ""
+}
+
+enum Gender {
+  Male
+  Female
+  Other
+}
+
+enum PhotoType {
+  Selfie
+  Profile
+  Tagged
+}
+
+model Person {
+  id        Int     @id @map("_id")
+  name      String
+  gender    Gender
+  addressId Int
+  address   Address @relation(fields: [addressId], references: [id])
+  photos    Photo[]
+  tags      Tag?
+}
+
+model Address {
+  id          Int      @id @map("_id")
+  addressText String
+  people      Person[]
+}
+
+type Photo {
+  height Int
+  Width  Int
+  url    String
+  type   PhotoType
+}
+
+type Tag {
+  id   Int
+  name String
+}
