@@ -1,16 +1,18 @@
-export type EnumGenderUnion = "Male" | "Female" | "Other";
+export type Gender = "Male" | "Female" | "Other";
+
+export type DataTest = "Apple" | "Banana" | "Orange" | "Pear";
 
 export interface Person {
   id: number;
   name: string;
   age: number;
   email: string | null;
-  gender: EnumGenderUnion;
+  gender: Gender;
   addressId: number;
-  address: Address;
-  friends: Person[];
-  friendsOf: Person[];
-  data: Data | null;
+  address?: Address;
+  friends?: Person[];
+  friendsOf?: Person[];
+  data?: Data | null;
 }
 
 export interface Address {
@@ -19,7 +21,7 @@ export interface Address {
   streetName: string;
   city: string;
   isBilling: boolean;
-  people: Person[];
+  people?: Person[];
 }
 
 export interface Data {
@@ -32,7 +34,8 @@ export interface Data {
   decimalField: Decimal;
   dateField: Date;
   jsonField: JsonValue;
-  bytesField: Buffer;
+  bytesField: BufferObject;
+  enumField: DataTest;
   optionalStringField: string | null;
   optionalBooleanField: boolean | null;
   optionalIntField: number | null;
@@ -41,7 +44,8 @@ export interface Data {
   optionalDecimalField: Decimal | null;
   optionalDateField: Date | null;
   optionalJsonField: JsonValue | null;
-  optionalBytesField: Buffer | null;
+  optionalBytesField: BufferObject | null;
+  optionalEnumField: DataTest | null;
   stringArrayField: string[];
   booleanArrayField: boolean[];
   intArrayField: number[];
@@ -50,13 +54,14 @@ export interface Data {
   decimalArrayField: Decimal[];
   dateArrayField: Date[];
   jsonArrayField: JsonValue[];
-  bytesArrayField: Buffer[];
+  bytesArrayField: BufferObject[];
+  enumArrayField: DataTest[];
   personId: number;
-  person: Person;
+  person?: Person;
 }
 
-interface Decimal {
-  valueOf(): string;
-}
+type Decimal = { valueOf(): string };
 
-type JsonValue = string | number | boolean | { [key in string]: JsonValue } | Array<JsonValue> | null;
+type JsonValue = string | number | boolean | { [key in string]?: JsonValue } | Array<JsonValue> | null;
+
+type BufferObject = { type: "Buffer"; data: number[] };

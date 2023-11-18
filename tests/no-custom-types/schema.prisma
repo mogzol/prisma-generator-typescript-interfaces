@@ -7,7 +7,7 @@ datasource db {
   url      = ""
 }
 
-// Basic model which does not use Json or Decimal
+// Basic model which does not use custom types such as Json or Decimal
 model User {
   id        String   @id @default(cuid())
   name      String

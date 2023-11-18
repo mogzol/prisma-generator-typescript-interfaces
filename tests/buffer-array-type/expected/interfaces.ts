@@ -34,7 +34,7 @@ export interface Data {
   decimalField: Decimal;
   dateField: Date;
   jsonField: JsonValue;
-  bytesField: Buffer;
+  bytesField: number[];
   enumField: DataTest;
   optionalStringField: string | null;
   optionalBooleanField: boolean | null;
@@ -44,7 +44,7 @@ export interface Data {
   optionalDecimalField: Decimal | null;
   optionalDateField: Date | null;
   optionalJsonField: JsonValue | null;
-  optionalBytesField: Buffer | null;
+  optionalBytesField: number[] | null;
   optionalEnumField: DataTest | null;
   stringArrayField: string[];
   booleanArrayField: boolean[];
@@ -54,7 +54,7 @@ export interface Data {
   decimalArrayField: Decimal[];
   dateArrayField: Date[];
   jsonArrayField: JsonValue[];
-  bytesArrayField: Buffer[];
+  bytesArrayField: number[][];
   enumArrayField: DataTest[];
   personId: number;
   person?: Person;

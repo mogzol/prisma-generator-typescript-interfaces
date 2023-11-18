@@ -10,6 +10,13 @@ enum Gender {
   Other
 }
 
+enum DataTest {
+  Apple
+  Banana
+  Orange
+  Pear
+}
+
 model Person {
   id        Int      @id @default(autoincrement())
   name      String
@@ -43,6 +50,7 @@ model Data {
   dateField    DateTime
   jsonField    Json
   bytesField   Bytes
+  enumField    DataTest
 
   optionalStringField  String?
   optionalBooleanField Boolean?
@@ -53,6 +61,7 @@ model Data {
   optionalDateField    DateTime?
   optionalJsonField    Json?
   optionalBytesField   Bytes?
+  optionalEnumField    DataTest?
 
   stringArrayField  String[]
   booleanArrayField Boolean[]
@@ -63,6 +72,7 @@ model Data {
   dateArrayField    DateTime[]
   jsonArrayField    Json[]
   bytesArrayField   Bytes[]
+  enumArrayField    DataTest[]
 
   personId Int    @unique
   person   Person @relation(fields: [personId], references: [id])

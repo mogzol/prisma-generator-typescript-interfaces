@@ -1,8 +1,8 @@
 generator typescriptInterfaces {
   provider   = "node generator.js"
-  enumType   = "stringUnion"
+  enumType   = "enum"
   enumPrefix = "Enum"
   enumSuffix = "Union"
 }
 
-// TEST_INSERT_BASE_HERE
+// #INSERT base.postgres.prisma

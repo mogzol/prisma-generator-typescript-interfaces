@@ -1,21 +1,13 @@
-export enum Gender {
-  Male = "Male",
-  Female = "Female",
-  Other = "Other"
-}
+export type Gender = "Male" | "Female" | "Other";
 
-export enum PhotoType {
-  Selfie = "Selfie",
-  Profile = "Profile",
-  Tagged = "Tagged"
-}
+export type PhotoType = "Selfie" | "Profile" | "Tagged";
 
 export interface Person {
   id: number;
   name: string;
   gender: Gender;
   addressId: number;
-  address: Address;
+  address?: Address;
   photos: Photo[];
   tags: Tag | null;
 }
@@ -23,7 +15,7 @@ export interface Person {
 export interface Address {
   id: number;
   addresText: string;
-  people: Person[];
+  people?: Person[];
 }
 
 export interface Photo {

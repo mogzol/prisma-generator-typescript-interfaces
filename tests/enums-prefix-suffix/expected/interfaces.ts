@@ -1,13 +1,22 @@
-export type Gender = "Male" | "Female" | "Other";
+export enum EnumGenderUnion {
+  Male = "Male",
+  Female = "Female",
+  Other = "Other"
+}
 
-export type DataTest = "Apple" | "Banana" | "Orange" | "Pear";
+export enum EnumDataTestUnion {
+  Apple = "Apple",
+  Banana = "Banana",
+  Orange = "Orange",
+  Pear = "Pear"
+}
 
 export interface Person {
   id: number;
   name: string;
   age: number;
   email: string | null;
-  gender: Gender;
+  gender: EnumGenderUnion;
   addressId: number;
   address?: Address;
   friends?: Person[];
@@ -35,7 +44,7 @@ export interface Data {
   dateField: Date;
   jsonField: JsonValue;
   bytesField: Buffer;
-  enumField: DataTest;
+  enumField: EnumDataTestUnion;
   optionalStringField: string | null;
   optionalBooleanField: boolean | null;
   optionalIntField: number | null;
@@ -45,7 +54,7 @@ export interface Data {
   optionalDateField: Date | null;
   optionalJsonField: JsonValue | null;
   optionalBytesField: Buffer | null;
-  optionalEnumField: DataTest | null;
+  optionalEnumField: EnumDataTestUnion | null;
   stringArrayField: string[];
   booleanArrayField: boolean[];
   intArrayField: number[];
@@ -55,7 +64,7 @@ export interface Data {
   dateArrayField: Date[];
   jsonArrayField: JsonValue[];
   bytesArrayField: Buffer[];
-  enumArrayField: DataTest[];
+  enumArrayField: EnumDataTestUnion[];
   personId: number;
   person?: Person;
 }

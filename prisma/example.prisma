@@ -16,6 +16,17 @@ generator typescriptInterfaces {
   prettier = true
 }
 
+generator typescriptInterfacesJson {
+  provider    = "node --loader ts-node/esm generator.ts"
+  output      = "exampleJson.ts"
+  modelSuffix = "Json"
+  dateType    = "string"
+  bigIntType  = "string"
+  decimalType = "string"
+  bytesType   = "BufferObject"
+  prettier    = true
+}
+
 enum Gender {
   Male
   Female
@@ -30,8 +41,8 @@ model Person {
   gender    Gender
   addressId Int
   address   Address  @relation(fields: [addressId], references: [id])
-  friends   Person[] @relation("Friends")
   friendsOf Person[] @relation("Friends")
+  friends   Person[] @relation("Friends")
   data      Data?
 }
 

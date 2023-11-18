@@ -9,10 +9,10 @@ export interface Person {
   email: string | null;
   gender: Gender;
   addressId: number;
-  address?: Address;
-  friends?: Person[];
-  friendsOf?: Person[];
-  data?: Data | null;
+  address: Address;
+  friends: Person[];
+  friendsOf: Person[];
+  data: Data | null;
 }
 
 export interface Address {
@@ -21,7 +21,7 @@ export interface Address {
   streetName: string;
   city: string;
   isBilling: boolean;
-  people?: Person[];
+  people: Person[];
 }
 
 export interface Data {
@@ -57,7 +57,7 @@ export interface Data {
   bytesArrayField: Buffer[];
   enumArrayField: DataTest[];
   personId: number;
-  person?: Person;
+  person: Person;
 }
 
 type Decimal = { valueOf(): string };

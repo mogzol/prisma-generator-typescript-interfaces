@@ -3,4 +3,4 @@ generator typescriptInterfaces {
   prettier = true
 }
 
-// TEST_INSERT_BASE_HERE
+// #INSERT base.postgres.prisma

@@ -5,7 +5,10 @@
  * "expected-error.txt" file in the relevant test folder.
  *
  * You can run specific tests by passing the one(s) you want to run as arguments to this script:
- *   npm run test custom-output no-options prettier
+ *   npm run test -- custom-output no-options prettier
+ *
+ * If you want to run all tests even if some fail, pass the --continue or -c flag:
+ *  npm run test -- -c
  */
 
 import { exec } from "node:child_process";
@@ -15,7 +18,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const TEMP_TEST_DIRNAME = "__TEST_TMP__";
-const BASE_REPLACE_STRING = "// TEST_INSERT_BASE_HERE";
+const BASE_REPLACE_REGEX = /^\/\/ ?#INSERT base\.([a-z]+)\.prisma$/gm;
 const RED = "\x1b[1m\x1b[41m\x1b[97m";
 const GREEN = "\x1b[1m\x1b[42m\x1b[97m";
 const RESET = "\x1b[0m";
@@ -29,29 +32,50 @@ const trimMultiLine = (s: string) =>
     .map((l) => l.trim())
     .join("\n");
 
-const testFilters = process.argv.slice(2);
+let testFilters = process.argv.slice(2);
 
-const tests = (await fs.readdir("tests", { withFileTypes: true }))
-  .filter(
-    (dirent) => dirent.isDirectory() && (!testFilters.length || testFilters.includes(dirent.name)),
-  )
-  .map((t) => path.join(t.path, t.name));
+// Continue on errors if --continue or -c is passed
+let continueOnError = false;
+let hasErrors = false;
+if (testFilters.some((f) => f === "--continue" || f === "-c")) {
+  continueOnError = true;
+  testFilters = testFilters.filter((f) => f !== "--continue" && f !== "-c");
+}
+
+const testsEntries = await fs.readdir("tests", { withFileTypes: true });
+const tests = testsEntries
+  .filter((d) => d.isDirectory() && (!testFilters.length || testFilters.includes(d.name)))
+  .map((d) => path.join(d.path, d.name));
+
+// Common schemas used by multiple tests
+const baseSchemas = new Map(
+  await Promise.all(
+    testsEntries
+      .filter((f) => f.isFile() && /^base\.[a-z]+\.prisma$/.test(f.name))
+      .map<Promise<[string, string]>>((f) =>
+        readFile(path.join(f.path, f.name)).then((c) => [f.name, c]),
+      ),
+  ),
+);
 
 // Get the length of the longest test name, so we can pad the output
 const longestName = Math.max(...tests.map((t) => t.length));
 
-// Common schema text used by many of the tests
-const baseSchema = await readFile(path.join("tests", "base.prisma"));
-
 console.log("Running tests...");
 
-try {
-  for (const test of tests) {
+for (const test of tests) {
+  try {
     process.stdout.write(`  ${test}${" ".repeat(longestName - test.length + 2)}`);
 
-    const schema = (await readFile(path.join(test, "schema.prisma"))).replace(
-      BASE_REPLACE_STRING,
-      baseSchema,
+    const schema = (await readFile(path.join(test, "schema.prisma"))).replaceAll(
+      BASE_REPLACE_REGEX,
+      (_, baseName) => {
+        const baseSchema = baseSchemas.get(`base.${baseName}.prisma`);
+        if (!baseSchema) {
+          throw new Error(`Unknown base schema: ${baseName}`);
+        }
+        return baseSchema;
+      },
     );
 
     let expectedError: string | null; // Text of expected stderr after a non-zero exit code
@@ -119,11 +143,19 @@ try {
     process.stdout.write(GREEN + " PASS " + RESET + "\n");
 
     await rimraf(testDir);
+  } catch (e) {
+    process.stdout.write(RED + " FAIL " + RESET + "\n\n");
+    console.error((e as Error).message, "\n");
+    hasErrors = true;
+    if (!continueOnError) {
+      process.exit(1);
+    }
   }
+}
 
-  console.log("\n\nAll tests passed!");
-} catch (e) {
-  process.stdout.write(RED + " FAIL " + RESET + "\n\n");
-  console.error((e as Error).message);
+if (hasErrors) {
+  console.error("\nSome tests failed!");
   process.exit(1);
+} else {
+  console.log("\nAll tests passed!");
 }

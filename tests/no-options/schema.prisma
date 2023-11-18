@@ -2,4 +2,4 @@ generator typescriptInterfaces {
   provider = "node generator.js"
 }
 
-// TEST_INSERT_BASE_HERE
+// #INSERT base.postgres.prisma

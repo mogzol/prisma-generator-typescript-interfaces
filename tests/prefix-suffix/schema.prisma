@@ -4,6 +4,8 @@ generator typescriptInterfaces {
   enumSuffix  = "Enum"
   modelPrefix = "model"
   modelSuffix = "Model"
+  typePrefix  = "type"
+  typeSuffix  = "Type"
 }
 
-// TEST_INSERT_BASE_HERE
+// #INSERT base.mongo.prisma

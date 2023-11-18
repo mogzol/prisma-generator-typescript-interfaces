@@ -6,4 +6,4 @@ generator typescriptInterfaces {
   bytesType   = "string"
 }
 
-// TEST_INSERT_BASE_HERE
+// #INSERT base.postgres.prisma

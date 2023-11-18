@@ -1,0 +1,45 @@
+// We need to use mongo to test composite types
+datasource db {
+  provider = "mongodb"
+  url      = ""
+}
+
+enum Gender {
+  Male
+  Female
+  Other
+}
+
+enum PhotoType {
+  Selfie
+  Profile
+  Tagged
+}
+
+model Person {
+  id        Int     @id @map("_id")
+  name      String
+  gender    Gender
+  addressId Int
+  address   Address @relation(fields: [addressId], references: [id])
+  photos    Photo[]
+  tags      Tag?
+}
+
+model Address {
+  id         Int      @id @map("_id")
+  addresText String
+  people     Person[]
+}
+
+type Photo {
+  height Int
+  Width  Int
+  url    String
+  type   PhotoType
+}
+
+type Tag {
+  id   Int
+  name String
+}
