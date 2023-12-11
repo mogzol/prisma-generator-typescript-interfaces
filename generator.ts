@@ -1,6 +1,11 @@
-import { DMMF, generatorHandler } from "@prisma/generator-helper";
+#!/usr/bin/env node
+import type { DMMF } from "@prisma/generator-helper";
+import generatorHelper from "@prisma/generator-helper";
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
+
+// Need to use default export for ESM compatibility
+const { generatorHandler } = generatorHelper;
 
 interface Config {
   enumPrefix: string;
