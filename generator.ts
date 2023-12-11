@@ -11,9 +11,9 @@ interface Config {
   typeSuffix: string;
   headerComment: string;
   enumType: "stringUnion" | "enum";
-  dateType: "Date" | "string";
+  dateType: "Date" | "string" | "number";
   bigIntType: "bigint" | "string" | "number";
-  decimalType: "Decimal" | "string";
+  decimalType: "Decimal" | "string" | "number";
   bytesType: "Buffer" | "BufferObject" | "string" | "number[]";
   optionalRelations: boolean;
   prettier: boolean;
@@ -46,13 +46,13 @@ function validateConfig(config: Config) {
   if (!["stringUnion", "enum"].includes(config.enumType)) {
     errors.push(`Invalid enumType: ${config.enumType}`);
   }
-  if (!["Date", "string"].includes(config.dateType)) {
+  if (!["Date", "string", "number"].includes(config.dateType)) {
     errors.push(`Invalid dateType: ${config.dateType}`);
   }
   if (!["bigint", "string", "number"].includes(config.bigIntType)) {
     errors.push(`Invalid bigIntType: ${config.bigIntType}`);
   }
-  if (!["Decimal", "string"].includes(config.decimalType)) {
+  if (!["Decimal", "string", "number"].includes(config.decimalType)) {
     errors.push(`Invalid decimalType: ${config.decimalType}`);
   }
   if (!["Buffer", "BufferObject", "string", "number[]"].includes(config.bytesType)) {

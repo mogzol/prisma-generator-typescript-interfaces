@@ -31,37 +31,35 @@ export interface Data {
   stringField: string;
   booleanField: boolean;
   intField: number;
-  bigIntField: bigint;
+  bigIntField: number;
   floatField: number;
-  decimalField: Decimal;
-  dateField: Date;
+  decimalField: number;
+  dateField: number;
   jsonField: JsonValue;
   bytesField: number[];
   enumField: DataTest;
   optionalStringField: string | null;
   optionalBooleanField: boolean | null;
   optionalIntField: number | null;
-  optionalBigIntField: bigint | null;
+  optionalBigIntField: number | null;
   optionalFloatField: number | null;
-  optionalDecimalField: Decimal | null;
-  optionalDateField: Date | null;
+  optionalDecimalField: number | null;
+  optionalDateField: number | null;
   optionalJsonField: JsonValue | null;
   optionalBytesField: number[] | null;
   optionalEnumField: DataTest | null;
   stringArrayField: string[];
   booleanArrayField: boolean[];
   intArrayField: number[];
-  bigIntArrayField: bigint[];
+  bigIntArrayField: number[];
   floatArrayField: number[];
-  decimalArrayField: Decimal[];
-  dateArrayField: Date[];
+  decimalArrayField: number[];
+  dateArrayField: number[];
   jsonArrayField: JsonValue[];
   bytesArrayField: number[][];
   enumArrayField: DataTest[];
   personId: number;
   person?: Person;
 }
-
-type Decimal = { valueOf(): string };
 
 type JsonValue = string | number | boolean | { [key in string]?: JsonValue } | Array<JsonValue> | null;

@@ -61,22 +61,19 @@ generator stringTypes {
   bytesType   = "string"
 }
 
-generator bytesNumberArray {
-  provider  = "node --loader ts-node/esm generator.ts"
-  output    = "bytesNumberArray.ts"
-  bytesType = "number[]"
+generator numberTypes {
+  provider    = "node --loader ts-node/esm generator.ts"
+  output      = "numberTypes.ts"
+  dateType    = "number"
+  bigIntType  = "number"
+  decimalType = "number"
+  bytesType   = "number[]"
 }
 
 generator bytesBufferObject {
   provider  = "node --loader ts-node/esm generator.ts"
   output    = "bytesBufferObject.ts"
   bytesType = "BufferObject"
-}
-
-generator bigintNumber {
-  provider   = "node --loader ts-node/esm generator.ts"
-  output     = "bigintNumber.ts"
-  bigIntType = "number"
 }
 
 generator enumType {
