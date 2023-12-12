@@ -1,4 +1,5 @@
 Error:
+Invalid modelType: bad
 Invalid enumType: incorrect
 Invalid dateType: wrong
 Invalid bigIntType: values

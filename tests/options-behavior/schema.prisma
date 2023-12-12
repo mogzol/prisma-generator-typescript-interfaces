@@ -90,6 +90,12 @@ generator enumTypeSuffixPrefix {
   enumSuffix = "Enum"
 }
 
+generator modelType {
+  provider  = "node --loader ts-node/esm generator.ts"
+  output    = "modelType.ts"
+  modelType = "type"
+}
+
 // ========================
 // Prisma Schema
 // ========================

@@ -4,12 +4,12 @@
 
 generator typescriptInterfaces {
   provider    = "node --loader ts-node/esm generator.ts"
+  modelType   = "bad"
   enumType    = "incorrect"
   dateType    = "wrong"
   bigIntType  = "values"
   decimalType = "go"
   bytesType   = "here"
-  prettier    = "bad"
 }
 
 // ========================

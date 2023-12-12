@@ -10,6 +10,12 @@ generator mongoTypes {
   output   = "mongoTypes.ts"
 }
 
+generator mongoModelType {
+  provider  = "node --loader ts-node/esm generator.ts"
+  output    = "mongoModelType.ts"
+  modelType = "type"
+}
+
 generator prefixSuffix {
   provider   = "node --loader ts-node/esm generator.ts"
   output     = "prefixSuffix.ts"
