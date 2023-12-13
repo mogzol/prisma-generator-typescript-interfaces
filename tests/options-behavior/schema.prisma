@@ -4,6 +4,7 @@
 // Generator Tests
 // ========================
 
+// Unlike other tests, this one should output to the default "interfaces.ts"
 generator noOptions {
   provider = "node --loader ts-node/esm generator.ts"
 }
@@ -41,6 +42,12 @@ generator requiredRelations {
   provider          = "node --loader ts-node/esm generator.ts"
   output            = "requiredRelations.ts"
   optionalRelations = false
+}
+
+generator omitRelations {
+  provider      = "node --loader ts-node/esm generator.ts"
+  output        = "omitRelations.ts"
+  omitRelations = true
 }
 
 generator prefixSuffix {

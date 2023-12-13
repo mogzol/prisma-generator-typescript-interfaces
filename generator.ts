@@ -22,6 +22,7 @@ interface Config {
   decimalType: "Decimal" | "string" | "number";
   bytesType: "Buffer" | "BufferObject" | "string" | "number[]";
   optionalRelations: boolean;
+  omitRelations: boolean;
   prettier: boolean;
 }
 
@@ -123,13 +124,13 @@ function getModelTs(
         case "object": {
           const modelName = modelNameMap.get(type);
           const typeName = typeNameMap.get(type);
-          if (!modelName && !typeName) {
+          if (typeName) {
+            return getDefinition(typeName); // Type relations are never optional or omitted
+          } else if (modelName) {
+            return config.omitRelations ? null : getDefinition(modelName, config.optionalRelations);
+          } else {
             throw new Error(`Unknown model name: ${type}`);
           }
-          return getDefinition(
-            (modelName ?? typeName) as string,
-            config.optionalRelations && !typeName, // Type relations are never optional
-          );
         }
         case "enum": {
           const enumName = enumNameMap.get(type);
@@ -144,6 +145,7 @@ function getModelTs(
           throw new Error(`Unknown field kind: ${kind}`);
       }
     })
+    .filter((f) => f !== null)
     .join("\n");
 
   const name = modelNameMap.get(modelData.name) ?? typeNameMap.get(modelData.name);
@@ -184,6 +186,7 @@ generatorHandler({
       ...baseConfig,
       // Booleans go here since in the base config they are strings
       optionalRelations: baseConfig.optionalRelations !== "false", // Default true
+      omitRelations: baseConfig.omitRelations === "true", // Default false
       prettier: baseConfig.prettier === "true", // Default false
     };
 

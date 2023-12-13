@@ -10,10 +10,18 @@ generator mongoTypes {
   output   = "mongoTypes.ts"
 }
 
+// Ensure modelType = "type" also applies to `type` definitions
 generator mongoModelType {
   provider  = "node --loader ts-node/esm generator.ts"
   output    = "mongoModelType.ts"
   modelType = "type"
+}
+
+// Ensure omitRelations does not apply to `type` definitions (since they always exist on the object)
+generator mongoOmitRelations {
+  provider      = "node --loader ts-node/esm generator.ts"
+  output        = "mongoOmitRelations.ts"
+  omitRelations = true
 }
 
 generator prefixSuffix {
