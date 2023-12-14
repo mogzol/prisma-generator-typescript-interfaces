@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import type { DMMF } from "@prisma/generator-helper";
 import generatorHelper from "@prisma/generator-helper";
 import { mkdir, writeFile } from "node:fs/promises";
