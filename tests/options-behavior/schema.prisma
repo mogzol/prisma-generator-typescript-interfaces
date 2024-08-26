@@ -97,6 +97,12 @@ generator enumTypeSuffixPrefix {
   enumSuffix = "Enum"
 }
 
+generator enumTypeObject {
+  provider = "node --loader ts-node/esm generator.ts"
+  output   = "enumTypeObject.ts"
+  enumType = "object"
+}
+
 generator modelType {
   provider  = "node --loader ts-node/esm generator.ts"
   output    = "modelType.ts"
