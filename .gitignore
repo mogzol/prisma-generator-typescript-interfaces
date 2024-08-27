@@ -1,7 +1,6 @@
 node_modules
 __TEST_TMP__
-*.js
-!eslint.config.js
+generator.js
 *.tgz
 
 # Ignore eventyrhing in the prisma folder except the example
