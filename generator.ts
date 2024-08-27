@@ -90,7 +90,7 @@ function getEnumTs(
     case "object": {
       const enumValues = enumData.values.map(({ name }) => `  ${name}: "${name}"`).join(",\n");
       const enumName = enumNameMap.get(enumData.name);
-      return `export const ${enumName} = {\n${enumValues}\n};\n\nexport type ${enumName} = (typeof ${enumName})[keyof typeof ${enumName}];`;
+      return `export const ${enumName} = {\n${enumValues}\n} as const;\n\nexport type ${enumName} = (typeof ${enumName})[keyof typeof ${enumName}];`;
     }
     default:
       throw new Error(`Unknown enumType: ${config.enumType}`);
