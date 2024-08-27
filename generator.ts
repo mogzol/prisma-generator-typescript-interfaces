@@ -40,7 +40,7 @@ const SCALAR_TYPE_GETTERS: Record<string, (config: Config) => string> = {
 
 // Since we want the output to have zero dependencies, define custom types which are compatible
 // with the actual Prisma types. If users need the real Prisma types, they can cast to them.
-const CUSTOM_TYPES: Record<string, string> = {
+const CUSTOM_TYPES = {
   BufferObject: 'type BufferObject = { type: "Buffer"; data: number[] };',
   Decimal: "type Decimal = { valueOf(): string };",
   JsonValue:
@@ -235,7 +235,7 @@ generatorHandler({
       let prettier: typeof import("prettier");
       try {
         prettier = await import("prettier");
-      } catch (e) {
+      } catch {
         throw new Error("Unable import Prettier. Is it installed?");
       }
 
