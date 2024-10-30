@@ -22,6 +22,7 @@ interface Config {
   bytesType: "Buffer" | "BufferObject" | "string" | "number[]";
   optionalRelations: boolean;
   omitRelations: boolean;
+  optionalNullables: boolean;
   prettier: boolean;
 }
 
@@ -109,9 +110,9 @@ function getModelTs(
   const fields = modelData.fields
     .map(({ name, kind, type, isRequired, isList }) => {
       const getDefinition = (resolvedType: string, optional = false) =>
-        `  ${name}${optional ? "?" : ""}: ${resolvedType}${isList ? "[]" : ""}${
-          !isRequired ? " | null" : ""
-        };`;
+        "  " +
+        `${name}${optional || (!isRequired && config.optionalNullables) ? "?" : ""}: ` +
+        `${resolvedType}${isList ? "[]" : ""}${!isRequired ? " | null" : ""};`;
 
       switch (kind) {
         case "scalar": {
@@ -191,6 +192,7 @@ generatorHandler({
       // Booleans go here since in the base config they are strings
       optionalRelations: baseConfig.optionalRelations !== "false", // Default true
       omitRelations: baseConfig.omitRelations === "true", // Default false
+      optionalNullables: baseConfig.optionalNullables === "true", // Default false
       prettier: baseConfig.prettier === "true", // Default false
     };
 

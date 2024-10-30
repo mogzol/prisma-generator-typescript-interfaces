@@ -50,6 +50,20 @@ generator omitRelations {
   omitRelations = true
 }
 
+generator optionalNullables {
+  provider          = "node --loader ts-node/esm generator.ts"
+  output            = "optionalNullables.ts"
+  optionalNullables = true
+}
+
+// Note that optionalNullables takes priority for a nullable raltion.
+generator optionalNullablesRequiredRelations {
+  provider          = "node --loader ts-node/esm generator.ts"
+  output            = "optionalNullablesRequiredRelations.ts"
+  optionalNullables = true
+  optionalRelations = false
+}
+
 generator prefixSuffix {
   provider    = "node --loader ts-node/esm generator.ts"
   output      = "prefixSuffix.ts"

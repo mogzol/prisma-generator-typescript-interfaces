@@ -1,6 +1,6 @@
 {
   "name": "prisma-generator-typescript-interfaces",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Generate zero-dependency Typescript interfaces from Prisma schema",
   "author": "Morgan Zolob",
   "license": "MIT",
@@ -30,18 +30,18 @@
     "@prisma/generator-helper": "^5.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.9.1",
-    "@prisma/client": "^5.18.0",
+    "@eslint/js": "^9.13.0",
+    "@prisma/client": "^5.21.1",
     "@types/eslint__js": "^8.42.3",
-    "eslint": "^9.9.1",
+    "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",
-    "husky": "^9.1.5",
+    "husky": "^9.1.6",
     "prettier": "^3.3.3",
-    "prisma": "^5.18.0",
+    "prisma": "^5.21.1",
     "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.4",
-    "typescript-eslint": "^8.3.0"
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.12.2"
   },
   "keywords": [
     "prisma",
