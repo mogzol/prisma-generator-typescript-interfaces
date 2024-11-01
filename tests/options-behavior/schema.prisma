@@ -56,7 +56,7 @@ generator optionalNullables {
   optionalNullables = true
 }
 
-// Note that optionalNullables takes priority for a nullable raltion.
+// Note that optionalNullables takes priority for a nullable relation.
 generator optionalNullablesRequiredRelations {
   provider          = "node --loader ts-node/esm generator.ts"
   output            = "optionalNullablesRequiredRelations.ts"
