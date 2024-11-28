@@ -24,6 +24,7 @@ interface Config {
   omitRelations: boolean;
   optionalNullables: boolean;
   prettier: boolean;
+  resolvePrettierConfig: boolean;
 }
 
 // Map of Prisma scalar types to Typescript type getters
@@ -194,6 +195,7 @@ generatorHandler({
       omitRelations: baseConfig.omitRelations === "true", // Default false
       optionalNullables: baseConfig.optionalNullables === "true", // Default false
       prettier: baseConfig.prettier === "true", // Default false
+      resolvePrettierConfig: baseConfig.resolvePrettierConfig === "true", // Default false
     };
 
     validateConfig(config);
@@ -232,6 +234,9 @@ generatorHandler({
       ts = `${headerContent}\n\n${ts}`;
     }
 
+    const outputFile = options.generator.output?.value as string;
+    const outputDir = dirname(outputFile);
+
     if (config.prettier) {
       // Prettier is imported inside this if so that it's not a required dependency
       let prettier: typeof import("prettier");
@@ -241,11 +246,15 @@ generatorHandler({
         throw new Error("Unable import Prettier. Is it installed?");
       }
 
-      ts = await prettier.format(ts, { parser: "typescript" });
+      let prettierOptions = config.resolvePrettierConfig
+        ? await prettier.resolveConfig(outputFile)
+        : {};
+
+      prettierOptions ??= {};
+
+      ts = await prettier.format(ts, { ...prettierOptions, parser: "typescript" });
     }
 
-    const outputFile = options.generator.output?.value as string;
-    const outputDir = dirname(outputFile);
     await mkdir(outputDir, { recursive: true });
     await writeFile(outputFile, ts);
   },
