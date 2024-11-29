@@ -1,0 +1,35 @@
+// Test if generator uses prettier config file when using prettier option
+
+// ========================
+// Generator Tests
+// ========================
+
+generator withConfig {
+  provider = "node --loader ts-node/esm generator.ts"
+  output   = "withConfig.ts"
+  prettier = true
+}
+
+generator withoutConfig {
+  provider              = "node --loader ts-node/esm generator.ts"
+  output                = "withoutConfig.ts"
+  prettier              = true
+  resolvePrettierConfig = false
+}
+
+// ========================
+// Prisma Schema
+// ========================
+
+datasource db {
+  provider = "postgresql"
+  url      = ""
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
