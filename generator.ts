@@ -195,7 +195,7 @@ generatorHandler({
       omitRelations: baseConfig.omitRelations === "true", // Default false
       optionalNullables: baseConfig.optionalNullables === "true", // Default false
       prettier: baseConfig.prettier === "true", // Default false
-      resolvePrettierConfig: baseConfig.resolvePrettierConfig === "true", // Default false
+      resolvePrettierConfig: baseConfig.resolvePrettierConfig !== "false", // Default true
     };
 
     validateConfig(config);
