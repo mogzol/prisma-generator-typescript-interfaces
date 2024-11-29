@@ -246,11 +246,9 @@ generatorHandler({
         throw new Error("Unable import Prettier. Is it installed?");
       }
 
-      let prettierOptions = config.resolvePrettierConfig
+      const prettierOptions = config.resolvePrettierConfig
         ? await prettier.resolveConfig(outputFile)
-        : {};
-
-      prettierOptions ??= {};
+        : null;
 
       ts = await prettier.format(ts, { ...prettierOptions, parser: "typescript" });
     }
