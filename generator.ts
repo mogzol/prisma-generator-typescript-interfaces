@@ -116,19 +116,19 @@ function getModelTs(
 ): string {
   const fields = modelData.fields
     .map(({ name, kind, type, isRequired, isList }) => {
-      // 添加ApiProperty装饰器的函数
+      // Function to add ApiProperty decorator
       const getApiPropertyDecorator = (resolvedType: string, isEnum = false) => {
         if (!config.nestjsSwagger || config.modelType !== "class") return "";
 
         const options: string[] = [];
 
-        // 处理类型
+        // Handle type
         if (isEnum) {
-          // 添加枚举值
+          // Add enum values
           const enumName = enumNameMap.get(type);
           if (enumName) {
             if (config.enumType === "stringUnion") {
-              // 对于字符串联合类型，我们需要提供枚举值
+              // For string union types, we need to provide enum values
               const enumData = enums.find((e) => e.name === type);
               const enumValues = enumData
                 ? `[${enumData.values.map((v) => `'${v.name}'`).join(", ")}]`
@@ -140,7 +140,7 @@ function getModelTs(
             }
           }
 
-          // 对于枚举数组，添加isArray选项
+          // For enum arrays, add isArray option
           if (isList) {
             options.push("isArray: true");
           }
@@ -148,24 +148,24 @@ function getModelTs(
           return `  @ApiProperty(${options.length ? `{ ${options.join(", ")} }` : ""})\n`;
         }
 
-        // 处理是否必需
+        // Handle required status
         if (isRequired) {
           options.push("required: true");
         } else {
           options.push("required: false");
         }
 
-        // 处理数组类型
+        // Handle array types
         if (isList) {
           options.push("isArray: true");
         }
 
-        // 处理特殊类型
+        // Handle special types
         if (resolvedType === "Decimal" || config.decimalType === "Decimal") {
-          // 对于Decimal类型，使用string
+          // For Decimal type, use string
           options.push(`type: 'string'`);
         } else if (resolvedType === "bigint") {
-          // 对于BigInt类型，使用string
+          // For BigInt type, use string
           options.push(`type: 'BigInt'`);
         } else if (
           resolvedType !== "string" &&
@@ -173,7 +173,7 @@ function getModelTs(
           resolvedType !== "boolean" &&
           resolvedType !== "JsonValue"
         ) {
-          // 对于其他非基本类型，使用type选项
+          // For other non-basic types, use type option
           options.push(`type: () => ${resolvedType}`);
         }
 
@@ -320,19 +320,19 @@ generatorHandler({
       ts = `${headerContent}\n\n${ts}`;
     }
 
-    // 当nestjsSwagger为true时，添加ApiProperty的导入语句和自定义类型
+    // When nestjsSwagger is true, add ApiProperty import statement and custom types
     if (config.nestjsSwagger && config.modelType === "class") {
-      // 添加ApiProperty导入
+      // Add ApiProperty import
       let imports = `import { ApiProperty } from "@nestjs/swagger";\n\n`;
 
-      // 添加自定义类型定义到文件顶部
+      // Add custom type definitions to the top of the file
       if (usedCustomTypes.size > 0) {
         const customTypesDefinitions = Array.from(usedCustomTypes)
           .map((t) => CUSTOM_TYPES[t])
           .join("\n\n");
         imports += `${customTypesDefinitions}\n\n`;
 
-        // 从ts中移除自定义类型，因为已经添加到顶部了
+        // Remove custom types from ts since they've already been added to the top
         Array.from(usedCustomTypes).forEach((type) => {
           const typeDefinition = CUSTOM_TYPES[type];
           ts = ts.replace(typeDefinition, "");
