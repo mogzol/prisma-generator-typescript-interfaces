@@ -14,7 +14,7 @@ interface Config {
   typePrefix: string;
   typeSuffix: string;
   headerComment: string;
-  modelType: "interface" | "type";
+  modelType: "interface" | "type" | "class";
   enumType: "stringUnion" | "enum" | "object";
   dateType: "Date" | "string" | "number";
   bigIntType: "bigint" | "string" | "number";
@@ -25,6 +25,7 @@ interface Config {
   optionalNullables: boolean;
   prettier: boolean;
   resolvePrettierConfig: boolean;
+  nestjsSwagger: boolean;
 }
 
 // Map of Prisma scalar types to Typescript type getters
@@ -51,7 +52,7 @@ const CUSTOM_TYPES = {
 
 function validateConfig(config: Config) {
   const errors: string[] = [];
-  if (!["interface", "type"].includes(config.modelType)) {
+  if (!["interface", "type", "class"].includes(config.modelType)) {
     errors.push(`Invalid modelType: ${config.modelType}`);
   }
   if (!["stringUnion", "enum", "object"].includes(config.enumType)) {
@@ -69,6 +70,10 @@ function validateConfig(config: Config) {
   if (!["Buffer", "BufferObject", "string", "number[]"].includes(config.bytesType)) {
     errors.push(`Invalid bytesType: ${config.bytesType}`);
   }
+  if (config.nestjsSwagger && config.modelType !== "class") {
+    errors.push(`nestjsSwagger can only be used with modelType: "class"`);
+  }
+
   if (errors.length > 0) {
     throw new Error(errors.join("\n"));
   }
@@ -107,13 +112,83 @@ function getModelTs(
   enumNameMap: Map<string, string>,
   typeNameMap: Map<string, string>,
   usedCustomTypes: Set<keyof typeof CUSTOM_TYPES>,
+  enums: DMMF.DatamodelEnum[],
 ): string {
   const fields = modelData.fields
     .map(({ name, kind, type, isRequired, isList }) => {
-      const getDefinition = (resolvedType: string, optional = false) =>
-        "  " +
-        `${name}${optional || (!isRequired && config.optionalNullables) ? "?" : ""}: ` +
-        `${resolvedType}${isList ? "[]" : ""}${!isRequired ? " | null" : ""};`;
+      // 添加ApiProperty装饰器的函数
+      const getApiPropertyDecorator = (resolvedType: string, isEnum = false) => {
+        if (!config.nestjsSwagger || config.modelType !== "class") return "";
+
+        const options: string[] = [];
+
+        // 处理类型
+        if (isEnum) {
+          // 添加枚举值
+          const enumName = enumNameMap.get(type);
+          if (enumName) {
+            if (config.enumType === "stringUnion") {
+              // 对于字符串联合类型，我们需要提供枚举值
+              const enumData = enums.find((e) => e.name === type);
+              const enumValues = enumData
+                ? `[${enumData.values.map((v) => `'${v.name}'`).join(", ")}]`
+                : `Object.values(${enumName})`;
+              options.push(`enumName: '${enumName}'`);
+              options.push(`enum: ${enumValues}`);
+            } else {
+              options.push(`enum: ${enumName}`);
+            }
+          }
+
+          // 对于枚举数组，添加isArray选项
+          if (isList) {
+            options.push("isArray: true");
+          }
+
+          return `  @ApiProperty(${options.length ? `{ ${options.join(", ")} }` : ""})\n`;
+        }
+
+        // 处理是否必需
+        if (isRequired) {
+          options.push("required: true");
+        } else {
+          options.push("required: false");
+        }
+
+        // 处理数组类型
+        if (isList) {
+          options.push("isArray: true");
+        }
+
+        // 处理特殊类型
+        if (resolvedType === "Decimal" || config.decimalType === "Decimal") {
+          // 对于Decimal类型，使用string
+          options.push(`type: 'string'`);
+        } else if (resolvedType === "bigint") {
+          // 对于BigInt类型，使用string
+          options.push(`type: 'BigInt'`);
+        } else if (
+          resolvedType !== "string" &&
+          resolvedType !== "number" &&
+          resolvedType !== "boolean" &&
+          resolvedType !== "JsonValue"
+        ) {
+          // 对于其他非基本类型，使用type选项
+          options.push(`type: () => ${resolvedType}`);
+        }
+
+        return `  @ApiProperty(${options.length ? `{ ${options.join(", ")} }` : ""})\n`;
+      };
+
+      const getDefinition = (resolvedType: string, optional = false, isEnum = false) => {
+        const apiPropertyDecorator = getApiPropertyDecorator(resolvedType, isEnum);
+        return (
+          apiPropertyDecorator +
+          "  " +
+          `${name}${optional || (!isRequired && config.optionalNullables) ? "?" : ""}: ` +
+          `${resolvedType}${isList ? "[]" : ""}${!isRequired ? " | null" : ""};`
+        );
+      };
 
       switch (kind) {
         case "scalar": {
@@ -143,7 +218,7 @@ function getModelTs(
           if (!enumName) {
             throw new Error(`Unknown enum name: ${type}`);
           }
-          return getDefinition(enumName);
+          return getDefinition(enumName, false, true);
         }
         case "unsupported":
           return getDefinition("any");
@@ -161,6 +236,8 @@ function getModelTs(
       return `export interface ${name} {\n${fields}\n}`;
     case "type":
       return `export type ${name} = {\n${fields}\n};`;
+    case "class":
+      return `export class ${name} {\n${fields}\n}`;
     default:
       throw new Error(`Unknown modelType: ${config.modelType}`);
   }
@@ -196,6 +273,7 @@ generatorHandler({
       optionalNullables: baseConfig.optionalNullables === "true", // Default false
       prettier: baseConfig.prettier === "true", // Default false
       resolvePrettierConfig: baseConfig.resolvePrettierConfig !== "false", // Default true
+      nestjsSwagger: baseConfig.nestjsSwagger === "true", // Default false
     };
 
     validateConfig(config);
@@ -220,7 +298,15 @@ generatorHandler({
     const enumsTs = enums.map((e) => getEnumTs(config, e, enumNameMap));
     // Types and Models are essentially the same thing, so we can run both through getModelTs
     const modelsTs = [...models, ...types].map((m) =>
-      getModelTs(config, m, modelNameMap, enumNameMap, typeNameMap, usedCustomTypes),
+      getModelTs(
+        config,
+        m,
+        modelNameMap,
+        enumNameMap,
+        typeNameMap,
+        usedCustomTypes,
+        enums as DMMF.DatamodelEnum[],
+      ),
     );
     const customTypesTs = Array.from(usedCustomTypes).map((t) => CUSTOM_TYPES[t]);
 
@@ -232,6 +318,28 @@ generatorHandler({
         .map((line) => `// ${line}`)
         .join("\n");
       ts = `${headerContent}\n\n${ts}`;
+    }
+
+    // 当nestjsSwagger为true时，添加ApiProperty的导入语句和自定义类型
+    if (config.nestjsSwagger && config.modelType === "class") {
+      // 添加ApiProperty导入
+      let imports = `import { ApiProperty } from "@nestjs/swagger";\n\n`;
+
+      // 添加自定义类型定义到文件顶部
+      if (usedCustomTypes.size > 0) {
+        const customTypesDefinitions = Array.from(usedCustomTypes)
+          .map((t) => CUSTOM_TYPES[t])
+          .join("\n\n");
+        imports += `${customTypesDefinitions}\n\n`;
+
+        // 从ts中移除自定义类型，因为已经添加到顶部了
+        Array.from(usedCustomTypes).forEach((type) => {
+          const typeDefinition = CUSTOM_TYPES[type];
+          ts = ts.replace(typeDefinition, "");
+        });
+      }
+
+      ts = imports + ts;
     }
 
     const outputFile = options.generator.output?.value as string;
