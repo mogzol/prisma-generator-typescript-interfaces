@@ -5,13 +5,13 @@
 // ========================
 
 generator withConfig {
-  provider = "node --loader ts-node/esm generator.ts"
+  provider = "tsx generator.ts"
   output   = "withConfig.ts"
   prettier = true
 }
 
 generator withoutConfig {
-  provider              = "node --loader ts-node/esm generator.ts"
+  provider              = "tsx generator.ts"
   output                = "withoutConfig.ts"
   prettier              = true
   resolvePrettierConfig = false

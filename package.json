@@ -1,6 +1,6 @@
 {
   "name": "prisma-generator-typescript-interfaces",
-  "version": "1.7.0",
+  "version": "2.0.0",
   "description": "Generate zero-dependency Typescript interfaces from Prisma schema",
   "author": "Morgan Zolob",
   "license": "MIT",
@@ -23,25 +23,25 @@
     "generate": "prisma generate --schema=prisma/example.prisma",
     "lint": "prettier --check . && eslint . && echo 'Linting complete.'",
     "lint:fix": "prettier --write . && eslint . --fix && echo 'Linting complete.'",
-    "test": "node --loader ts-node/esm test.ts",
+    "test": "tsx test.ts",
     "prepare": "node .husky/install.mjs"
   },
   "dependencies": {
-    "@prisma/generator-helper": "^5.0.0"
+    "@prisma/generator-helper": "^5 || ^6"
   },
   "devDependencies": {
-    "@eslint/js": "^9.13.0",
-    "@prisma/client": "^5.21.1",
-    "@types/eslint__js": "^8.42.3",
-    "eslint": "^9.13.0",
-    "eslint-config-prettier": "^9.1.0",
-    "husky": "^9.1.6",
-    "prettier": "^3.3.3",
-    "prisma": "^5.21.1",
+    "@eslint/js": "^9.22.0",
+    "@prisma/client": "^6.5.0",
+    "@types/node": "^22.13.10",
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.1.1",
+    "husky": "^9.1.7",
+    "prettier": "^3.5.3",
+    "prisma": "^6.5.0",
     "rimraf": "^6.0.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.6.3",
-    "typescript-eslint": "^8.12.2"
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.1"
   },
   "keywords": [
     "prisma",

@@ -36,7 +36,7 @@ export interface modelDataModel {
   decimalField: Decimal;
   dateField: Date;
   jsonField: JsonValue;
-  bytesField: Buffer;
+  bytesField: Uint8Array;
   enumField: enumDataTestEnum;
   optionalStringField: string | null;
   optionalBooleanField: boolean | null;
@@ -46,7 +46,7 @@ export interface modelDataModel {
   optionalDecimalField: Decimal | null;
   optionalDateField: Date | null;
   optionalJsonField: JsonValue | null;
-  optionalBytesField: Buffer | null;
+  optionalBytesField: Uint8Array | null;
   optionalEnumField: enumDataTestEnum | null;
   stringArrayField: string[];
   booleanArrayField: boolean[];
@@ -56,7 +56,7 @@ export interface modelDataModel {
   decimalArrayField: Decimal[];
   dateArrayField: Date[];
   jsonArrayField: JsonValue[];
-  bytesArrayField: Buffer[];
+  bytesArrayField: Uint8Array[];
   enumArrayField: enumDataTestEnum[];
   personId: number;
   person?: modelPersonModel;

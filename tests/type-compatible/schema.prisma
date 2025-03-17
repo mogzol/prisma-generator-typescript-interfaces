@@ -1,0 +1,88 @@
+// ========================
+// Generator Tests
+// ========================
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "client"
+}
+
+generator typescriptInterfaces {
+  provider = "tsx generator.ts"
+}
+
+// ========================
+// Prisma Schema
+// ========================
+
+datasource db {
+  provider = "postgresql"
+  url      = ""
+}
+
+enum Fruits {
+  Apple
+  Banana
+  Orange
+  Pear
+}
+
+model Data {
+  id            Int       @id
+  stringField   String
+  booleanField  Boolean
+  intField      Int
+  bigIntField   BigInt
+  floatField    Float
+  decimalField  Decimal
+  dateField     DateTime
+  jsonField     Json
+  bytesField    Bytes
+  enumField     Fruits
+  relationId    Int
+  relationField RelationA @relation(fields: [relationId], references: [id])
+
+  optionalStringField   String?
+  optionalBooleanField  Boolean?
+  optionalIntField      Int?
+  optionalBigIntField   BigInt?
+  optionalFloatField    Float?
+  optionalDecimalField  Decimal?
+  optionalDateField     DateTime?
+  optionalJsonField     Json?
+  optionalBytesField    Bytes?
+  optionalEnumField     Fruits?
+  optionalRelationField RelationB?
+
+  stringArrayField   String[]
+  booleanArrayField  Boolean[]
+  intArrayField      Int[]
+  bigIntArrayField   BigInt[]
+  floatArrayField    Float[]
+  decimalArrayField  Decimal[]
+  dateArrayField     DateTime[]
+  jsonArrayField     Json[]
+  bytesArrayField    Bytes[]
+  enumArrayField     Fruits[]
+  relationArrayField RelationC[]
+}
+
+model RelationA {
+  id     Int    @id
+  fieldA String
+  data   Data[]
+}
+
+model RelationB {
+  id     Int    @id
+  fieldB String
+  dataId Int    @unique
+  data   Data   @relation(fields: [dataId], references: [id])
+}
+
+model RelationC {
+  id     Int    @id
+  fieldC String
+  dataId Int
+  data   Data   @relation(fields: [dataId], references: [id])
+}

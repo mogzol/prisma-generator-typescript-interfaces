@@ -19,7 +19,7 @@ interface Config {
   dateType: "Date" | "string" | "number";
   bigIntType: "bigint" | "string" | "number";
   decimalType: "Decimal" | "string" | "number";
-  bytesType: "Buffer" | "BufferObject" | "string" | "number[]";
+  bytesType: "Uint8Array" | "Buffer" | "ArrayObject" | "BufferObject" | "string" | "number[]";
   optionalRelations: boolean;
   omitRelations: boolean;
   optionalNullables: boolean;
@@ -43,6 +43,7 @@ const SCALAR_TYPE_GETTERS: Record<string, (config: Config) => string> = {
 // Since we want the output to have zero dependencies, define custom types which are compatible
 // with the actual Prisma types. If users need the real Prisma types, they can cast to them.
 const CUSTOM_TYPES = {
+  ArrayObject: "type ArrayObject = { [index: number]: number } & { length?: never };",
   BufferObject: 'type BufferObject = { type: "Buffer"; data: number[] };',
   Decimal: "type Decimal = { valueOf(): string };",
   JsonValue:
@@ -66,7 +67,11 @@ function validateConfig(config: Config) {
   if (!["Decimal", "string", "number"].includes(config.decimalType)) {
     errors.push(`Invalid decimalType: ${config.decimalType}`);
   }
-  if (!["Buffer", "BufferObject", "string", "number[]"].includes(config.bytesType)) {
+  if (
+    !["Uint8Array", "Buffer", "ArrayObject", "BufferObject", "string", "number[]"].includes(
+      config.bytesType,
+    )
+  ) {
     errors.push(`Invalid bytesType: ${config.bytesType}`);
   }
   if (errors.length > 0) {
@@ -188,7 +193,7 @@ generatorHandler({
       dateType: "Date",
       bigIntType: "bigint",
       decimalType: "Decimal",
-      bytesType: "Buffer",
+      bytesType: "Uint8Array",
       ...baseConfig,
       // Booleans go here since in the base config they are strings
       optionalRelations: baseConfig.optionalRelations !== "false", // Default true

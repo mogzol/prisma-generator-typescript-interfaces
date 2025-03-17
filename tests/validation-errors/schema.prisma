@@ -3,7 +3,7 @@
 // ========================
 
 generator typescriptInterfaces {
-  provider    = "node --loader ts-node/esm generator.ts"
+  provider    = "tsx generator.ts"
   modelType   = "bad"
   enumType    = "incorrect"
   dateType    = "wrong"

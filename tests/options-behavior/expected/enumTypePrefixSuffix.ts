@@ -45,7 +45,7 @@ export interface Data {
   decimalField: Decimal;
   dateField: Date;
   jsonField: JsonValue;
-  bytesField: Buffer;
+  bytesField: Uint8Array;
   enumField: eDataTestEnum;
   optionalStringField: string | null;
   optionalBooleanField: boolean | null;
@@ -55,7 +55,7 @@ export interface Data {
   optionalDecimalField: Decimal | null;
   optionalDateField: Date | null;
   optionalJsonField: JsonValue | null;
-  optionalBytesField: Buffer | null;
+  optionalBytesField: Uint8Array | null;
   optionalEnumField: eDataTestEnum | null;
   stringArrayField: string[];
   booleanArrayField: boolean[];
@@ -65,7 +65,7 @@ export interface Data {
   decimalArrayField: Decimal[];
   dateArrayField: Date[];
   jsonArrayField: JsonValue[];
-  bytesArrayField: Buffer[];
+  bytesArrayField: Uint8Array[];
   enumArrayField: eDataTestEnum[];
   personId: number;
   person?: Person;

@@ -2,10 +2,16 @@
  * Custom testing script which runs the generator on all the schemas in the "tests" directory, and
  * validates that the output matches the expected outputs (in the "expected" directory within the
  * test folders). If a test is expected to fail, the expected error message should be put in an
- * "expected-error.txt" file in the relevant test folder.
+ * "expected-error.txt" file in the relevant test folder. Optionally, a test can include a
+ * "test-types.ts" file, which will be type-checked during the test, and will fail the test if there
+ * are any errors.
  *
  * You can run specific tests by passing them as arguments to this script:
  *   npm run test -- options-behavior validation-errors
+ *
+ * You can use the "--keep-output" argument to keep the __TEST_TMP__ directories after the tests
+ * have run, even if they are successful:
+ *   npm run test -- --keep-output
  */
 
 import { exec } from "node:child_process";
@@ -26,6 +32,18 @@ const trimMultiLine = (s: string) =>
     .split("\n")
     .map((l) => l.trim())
     .join("\n");
+
+async function validPath(path: string) {
+  try {
+    await fs.access(path);
+    return path; // Return the path if it is accessible
+  } catch (e) {
+    if (e instanceof Error && "code" in e && e.code === "ENOENT") {
+      return null; // Return null when file is not found
+    }
+    throw e;
+  }
+}
 
 async function readFile(path: string) {
   try {
@@ -50,6 +68,12 @@ async function readDir(path: string) {
 }
 
 const testFilters = process.argv.slice(2);
+
+const keepOutputIdx = testFilters.indexOf("--keep-output");
+const keepOutput = keepOutputIdx !== -1;
+if (keepOutput) {
+  testFilters.splice(keepOutputIdx, 1);
+}
 
 const tests = (await readDir("tests"))
   .filter((d) => d.isDirectory() && (!testFilters.length || testFilters.includes(d.name)))
@@ -77,6 +101,7 @@ for (const test of tests) {
     }
 
     let expectedError = await readFile(path.join(test, "expected-error.txt"));
+    const typeTester = await validPath(path.join(test, "test-types.ts"));
 
     const expectedFiles: Map<string, string | null> = new Map();
     for (const entry of await readDir(path.join(test, "expected"))) {
@@ -85,7 +110,7 @@ for (const test of tests) {
       }
     }
 
-    if (expectedFiles.size === 0 && !expectedError) {
+    if (expectedFiles.size === 0 && !expectedError && !typeTester) {
       throw new Error(`Test ${test} has no expected files or errors!`);
     }
 
@@ -110,6 +135,17 @@ for (const test of tests) {
 
     if (expectedError) {
       throw new Error("Expected error did not occur!");
+    }
+
+    if (typeTester) {
+      try {
+        await execAsync(`tsc --pretty --noEmit --strict --module NodeNext ${typeTester}`);
+      } catch (e) {
+        const error = e as { code: number; stdout: string; stderr: string };
+        throw new Error(
+          `Error validating types! tsc exited with code ${error.code}:\n\n${error.stdout}`,
+        );
+      }
     }
 
     const errors: string[] = [];
@@ -148,7 +184,9 @@ for (const test of tests) {
 
     process.stdout.write(GREEN + " PASS " + RESET + "\n");
 
-    await rimraf(testDir); // Clean up test dir on success
+    if (!keepOutput) {
+      await rimraf(testDir); // Clean up test dir on success
+    }
   } catch (e) {
     process.stdout.write(RED + " FAIL " + RESET + "\n\n");
     console.error((e as Error).message, "\n");

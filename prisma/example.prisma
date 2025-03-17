@@ -1,9 +1,9 @@
-// Complete example schema to generate during development. Uses ts-node to run the generator.
+// Complete example schema to generate during development. Uses tsx to run the generator.
 // To generate, run: `npm run generate` or `npx prisma generate --schema=prisma/example.prisma`
 
 datasource db {
   provider = "postgresql"
-  url      = ""
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -11,19 +11,19 @@ generator client {
 }
 
 generator typescriptInterfaces {
-  provider = "node --loader ts-node/esm generator.ts"
+  provider = "tsx generator.ts"
   output   = "example.ts"
   prettier = true
 }
 
 generator typescriptInterfacesJson {
-  provider    = "node --loader ts-node/esm generator.ts"
+  provider    = "tsx generator.ts"
   output      = "exampleJson.ts"
   modelSuffix = "Json"
   dateType    = "string"
   bigIntType  = "string"
   decimalType = "string"
-  bytesType   = "BufferObject"
+  bytesType   = "ArrayObject"
   prettier    = true
 }
 
