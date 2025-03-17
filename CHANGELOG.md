@@ -1,3 +1,7 @@
+## 2.0.1
+
+- Fix README.md example, and re-order the README.md sections.
+
 # 2.0.0
 
 - **BREAKING**: Add `Uint8Array` option for `bytesType`, and make it the default. This is to match the changes made in [Prisma v6](https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions/upgrading-to-prisma-6#usage-of-buffer). If you are still using Prisma v5 and want the generated types to be type-compatible with the Prisma client, you will now need to explicitly set `bytesType` to `Buffer`.
