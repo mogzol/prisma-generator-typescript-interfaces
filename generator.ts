@@ -15,7 +15,7 @@ interface Config {
   typeSuffix: string;
   headerComment: string;
   modelType: "interface" | "type";
-  enumType: "stringUnion" | "enum" | "object";
+  enumType: "stringUnion" | "enum" | "object" | "dict";
   dateType: "Date" | "string" | "number";
   bigIntType: "bigint" | "string" | "number";
   decimalType: "Decimal" | "string" | "number";
@@ -25,6 +25,8 @@ interface Config {
   optionalNullables: boolean;
   prettier: boolean;
   resolvePrettierConfig: boolean;
+  enumObjectPrefix: string;
+  enumObjectSuffix: string;
 }
 
 // Map of Prisma scalar types to Typescript type getters
@@ -55,7 +57,7 @@ function validateConfig(config: Config) {
   if (!["interface", "type"].includes(config.modelType)) {
     errors.push(`Invalid modelType: ${config.modelType}`);
   }
-  if (!["stringUnion", "enum", "object"].includes(config.enumType)) {
+  if (!["stringUnion", "enum", "object", "dict"].includes(config.enumType)) {
     errors.push(`Invalid enumType: ${config.enumType}`);
   }
   if (!["Date", "string", "number"].includes(config.dateType)) {
@@ -97,7 +99,15 @@ function getEnumTs(
     case "object": {
       const enumValues = enumData.values.map(({ name }) => `  ${name}: "${name}"`).join(",\n");
       const enumName = enumNameMap.get(enumData.name);
-      return `export const ${enumName} = {\n${enumValues}\n} as const;\n\nexport type ${enumName} = (typeof ${enumName})[keyof typeof ${enumName}];`;
+      const enumObjectName = `${config.enumObjectPrefix}${enumName}${config.enumObjectSuffix}`
+      return `export const ${enumObjectName} = {\n${enumValues}\n} as const;\n\nexport type ${enumName} = (typeof ${enumObjectName})[keyof typeof ${enumObjectName}];`;
+    }
+    case "dict": {
+      const enumValues = enumData.values.map(({ name }) => `  ${name}: "${name}"`).join(",\n");
+      const enumName = enumNameMap.get(enumData.name);
+      const enumObjectName = `${config.enumObjectPrefix}${enumName}${config.enumObjectSuffix}`
+      const enumType = enumData.values.map(({ name }) => `"${name}"`).join(" | ");
+      return `export const ${enumObjectName} = {\n${enumValues}\n} satisfies Record<string, ${enumType}>;\n\nexport type ${enumName} = (typeof ${enumObjectName})[keyof typeof ${enumObjectName}];`;
     }
     default:
       throw new Error(`Unknown enumType: ${config.enumType}`);
@@ -194,6 +204,10 @@ generatorHandler({
       bigIntType: "bigint",
       decimalType: "Decimal",
       bytesType: "Uint8Array",
+      enumTypePrefix: "",
+      enumTypeSuffix: "",
+      enumValuePrefix: "",
+      enumValueSuffix: "",
       ...baseConfig,
       // Booleans go here since in the base config they are strings
       optionalRelations: baseConfig.optionalRelations !== "false", // Default true

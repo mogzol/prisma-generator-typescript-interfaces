@@ -1,10 +1,10 @@
-// These tests cover most of the generator's options
+# These tests cover most of the generator's options
 
-// ========================
-// Generator Tests
-// ========================
+# ========================
+# Generator Tests
+# ========================
 
-// Unlike other tests, this one should output to the default "interfaces.ts"
+# Unlike other tests, this one should output to the default "interfaces.ts"
 generator noOptions {
   provider = "tsx generator.ts"
 }
@@ -67,7 +67,7 @@ generator optionalNullables {
   optionalNullables = true
 }
 
-// Note that optionalNullables takes priority for a nullable relation.
+# Note that optionalNullables takes priority for a nullable relation.
 generator optionalNullablesRequiredRelations {
   provider          = "tsx generator.ts"
   output            = "optionalNullablesRequiredRelations.ts"
@@ -154,9 +154,23 @@ generator modelType {
   modelType = "type"
 }
 
-// ========================
-// Prisma Schema
-// ========================
+generator dictEnumType {
+  provider = "tsx generator.ts"
+  output   = "dictEnumType.ts"
+  enumType = "dict"
+}
+
+generator dictEnumTypePrefixSuffix {
+  provider   = "tsx generator.ts"
+  output     = "dictEnumTypePrefixSuffix.ts"
+  enumType   = "dict"
+  enumPrefix = "d"
+  enumSuffix = "Enum"
+}
+
+# ========================
+# Prisma Schema
+# ========================
 
 datasource db {
   provider = "postgresql"
