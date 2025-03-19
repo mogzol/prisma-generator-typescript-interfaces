@@ -103,7 +103,7 @@ function getEnumTs(
       const enumName = enumNameMap.get(enumData.name);
       const enumObjectName = `${config.enumObjectPrefix}${enumName}${config.enumObjectSuffix}`;
       const enumType = enumData.values.map(({ name }) => `"${name}"`).join(" | ");
-      return `${exportKwd}const ${enumObjectName} = {\n${enumValues}\n} satisfies Record<string, ${enumType}>;\n\n${exportKwd}type ${enumName} = (typeof ${enumObjectName})[keyof typeof ${enumObjectName}];`;
+      return `${exportKwd}type ${enumName} = ${enumType};\n\n${exportKwd}const ${enumObjectName} = {\n${enumValues}\n} satisfies Record<string, ${enumName}>;`;
     }
     default:
       throw new Error(`Unknown enumType: ${config.enumType}`);

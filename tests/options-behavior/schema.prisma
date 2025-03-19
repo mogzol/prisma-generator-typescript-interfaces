@@ -163,11 +163,11 @@ generator enumTypeObjectPrefixSuffix {
 }
 
 generator enumTypeObjectValuePrefixSuffix {
-  provider   = "tsx generator.ts"
-  output     = "enumTypeObjectValuePrefixSuffix.ts"
-  enumType   = "object"
-  enumPrefix = "e"
-  enumSuffix = "Enum"
+  provider         = "tsx generator.ts"
+  output           = "enumTypeObjectValuePrefixSuffix.ts"
+  enumType         = "object"
+  enumPrefix       = "e"
+  enumSuffix       = "Enum"
   enumObjectPrefix = "$"
   enumObjectSuffix = "Obj"
 }
