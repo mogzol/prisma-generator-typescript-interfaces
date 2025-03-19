@@ -1,3 +1,11 @@
+## 2.1.0
+
+- Stop enum fields from being marked `readonly` when using `enumType = "object"` - [#14](https://github.com/mogzol/prisma-generator-typescript-interfaces/pull/14)
+  - Note that this is a **breaking change** if you are using TypeScript < 4.9, as it uses the `satisfies` keyword. Either upgrade TypeScript or use a different `enumType`.
+- Add `enumObjectSuffix` and `enumObjectPrefix` options - [#14](https://github.com/mogzol/prisma-generator-typescript-interfaces/pull/14)
+- Add `exportEnums` option - [#15](https://github.com/mogzol/prisma-generator-typescript-interfaces/pull/15)
+- Thanks [@helmturner](https://github.com/helmturner) for these changes!
+
 ## 2.0.1
 
 - Fix README.md example, and re-order the README.md sections.
@@ -10,7 +18,7 @@
 
 ## 1.7.0
 
-- Add `resolvePrettierConfig` option - #9 (thanks @adrian-rom64)
+- Add `resolvePrettierConfig` option - [#9](https://github.com/mogzol/prisma-generator-typescript-interfaces/pull/9) (thanks [@adrian-rom64](https://github.com/adrian-rom64))
 
 ## 1.6.1
 
@@ -22,7 +30,7 @@
 
 ## 1.5.0
 
-- Add `object` enumType option that matches Prisma client's enum definitions (#6)
+- Add `object` enumType option that matches Prisma client's enum definitions ([#6](https://github.com/mogzol/prisma-generator-typescript-interfaces/pull/6))
 
 ## 1.4.0
 

@@ -1,6 +1,6 @@
 {
   "name": "prisma-generator-typescript-interfaces",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Generate zero-dependency Typescript interfaces from Prisma schema",
   "author": "Morgan Zolob",
   "license": "MIT",
