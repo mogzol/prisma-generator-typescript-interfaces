@@ -164,6 +164,12 @@ generator modelType {
   modelType = "type"
 }
 
+generator enumTypeNone {
+  provider  = "tsx generator.ts"
+  output    = "enumTypeNone.ts"
+  enumType  = "none"
+}
+
 // ========================
 // Prisma Schema
 // ========================

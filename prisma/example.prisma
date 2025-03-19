@@ -19,6 +19,7 @@ generator typescriptInterfaces {
 generator typescriptInterfacesJson {
   provider    = "tsx generator.ts"
   output      = "exampleJson.ts"
+  enumType    = "none" // don't write redundant enums
   modelSuffix = "Json"
   dateType    = "string"
   bigIntType  = "string"
