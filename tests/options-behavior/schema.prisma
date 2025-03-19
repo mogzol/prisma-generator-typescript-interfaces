@@ -126,6 +126,13 @@ generator enumType {
   enumType = "enum"
 }
 
+generator enumExportFalse {
+  provider   = "tsx generator.ts"
+  output     = "enumExportFalse.ts"
+  enumType   = "enum"
+  exportEnums = false
+}
+
 generator enumTypePrefixSuffix {
   provider   = "tsx generator.ts"
   output     = "enumTypePrefixSuffix.ts"
@@ -138,6 +145,13 @@ generator enumTypeObject {
   provider = "tsx generator.ts"
   output   = "enumTypeObject.ts"
   enumType = "object"
+}
+
+generator enumExportFalseTypeObject {
+  provider   = "tsx generator.ts"
+  output     = "enumExportFalseTypeObject.ts"
+  enumType   = "object"
+  exportEnums = false
 }
 
 generator enumTypeObjectPrefixSuffix {
@@ -162,12 +176,6 @@ generator modelType {
   provider  = "tsx generator.ts"
   output    = "modelType.ts"
   modelType = "type"
-}
-
-generator enumTypeNone {
-  provider  = "tsx generator.ts"
-  output    = "enumTypeNone.ts"
-  enumType  = "none"
 }
 
 // ========================
