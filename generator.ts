@@ -25,6 +25,8 @@ interface Config {
   optionalNullables: boolean;
   prettier: boolean;
   resolvePrettierConfig: boolean;
+  enumObjectPrefix: string;
+  enumObjectSuffix: string;
 }
 
 // Map of Prisma scalar types to Typescript type getters
@@ -97,7 +99,9 @@ function getEnumTs(
     case "object": {
       const enumValues = enumData.values.map(({ name }) => `  ${name}: "${name}"`).join(",\n");
       const enumName = enumNameMap.get(enumData.name);
-      return `export const ${enumName} = {\n${enumValues}\n} as const;\n\nexport type ${enumName} = (typeof ${enumName})[keyof typeof ${enumName}];`;
+      const enumObjectName = `${config.enumObjectPrefix}${enumName}${config.enumObjectSuffix}`;
+      const enumType = enumData.values.map(({ name }) => `"${name}"`).join(" | ");
+      return `export const ${enumObjectName} = {\n${enumValues}\n} satisfies Record<string, ${enumType}>;\n\nexport type ${enumName} = (typeof ${enumObjectName})[keyof typeof ${enumObjectName}];`;
     }
     default:
       throw new Error(`Unknown enumType: ${config.enumType}`);
@@ -194,6 +198,8 @@ generatorHandler({
       bigIntType: "bigint",
       decimalType: "Decimal",
       bytesType: "Uint8Array",
+      enumObjectPrefix: "",
+      enumObjectSuffix: "",
       ...baseConfig,
       // Booleans go here since in the base config they are strings
       optionalRelations: baseConfig.optionalRelations !== "false", // Default true
