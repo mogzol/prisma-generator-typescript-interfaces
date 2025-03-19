@@ -24,6 +24,7 @@ generator typescriptInterfacesJson {
   bigIntType  = "string"
   decimalType = "string"
   bytesType   = "ArrayObject"
+  exportEnums = true
   prettier    = true
 }
 
