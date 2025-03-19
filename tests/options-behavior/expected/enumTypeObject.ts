@@ -4,7 +4,7 @@ export const Gender = {
   Male: "Male",
   Female: "Female",
   Other: "Other"
-} as const;
+} satisfies Record<string, "Male" | "Female" | "Other">;
 
 export type Gender = (typeof Gender)[keyof typeof Gender];
 
@@ -13,7 +13,7 @@ export const DataTest = {
   Banana: "Banana",
   Orange: "Orange",
   Pear: "Pear"
-} as const;
+} satisfies Record<string, "Apple" | "Banana" | "Orange" | "Pear">;
 
 export type DataTest = (typeof DataTest)[keyof typeof DataTest];
 

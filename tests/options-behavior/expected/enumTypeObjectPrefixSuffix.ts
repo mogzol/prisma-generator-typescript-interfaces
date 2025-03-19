@@ -4,7 +4,7 @@ export const eGenderEnum = {
   Male: "Male",
   Female: "Female",
   Other: "Other"
-} as const;
+} satisfies Record<string, "Male" | "Female" | "Other">;
 
 export type eGenderEnum = (typeof eGenderEnum)[keyof typeof eGenderEnum];
 
@@ -13,7 +13,7 @@ export const eDataTestEnum = {
   Banana: "Banana",
   Orange: "Orange",
   Pear: "Pear"
-} as const;
+} satisfies Record<string, "Apple" | "Banana" | "Orange" | "Pear">;
 
 export type eDataTestEnum = (typeof eDataTestEnum)[keyof typeof eDataTestEnum];
 

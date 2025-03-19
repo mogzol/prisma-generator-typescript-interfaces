@@ -158,30 +158,6 @@ generator enumTypeObjectValuePrefixSuffix {
   enumObjectSuffix = "Obj"
 }
 
-generator enumTypeDict {
-  provider = "tsx generator.ts"
-  output   = "enumTypeDict.ts"
-  enumType = "dict"
-}
-
-generator enumTypeDictPrefixSuffix {
-  provider   = "tsx generator.ts"
-  output     = "enumTypeDictPrefixSuffix.ts"
-  enumType   = "dict"
-  enumPrefix = "e"
-  enumSuffix = "Enum"
-}
-
-generator enumTypeDictValuePrefixSuffix {
-  provider   = "tsx generator.ts"
-  output     = "enumTypeDictValuePrefixSuffix.ts"
-  enumType   = "dict"
-  enumPrefix = "e"
-  enumSuffix = "Enum"
-  enumObjectPrefix = "$"
-  enumObjectSuffix = "Obj"
-}
-
 generator modelType {
   provider  = "tsx generator.ts"
   output    = "modelType.ts"
