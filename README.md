@@ -55,7 +55,8 @@ generator typescriptInterfaces {
 
 The path to the external types file will be resolved relative to the output path.
 
-> ![Note] The filename (**including extension**) specified in `externalTypesPath` will be copied to the generated file exactly. For example, if you specify `externalTypesPath = "../path/to/external-types.js"`, the generated file will contain `import { Type } from "<relative_path_to_external_types_parent_dir>/external-types.js"`. If you specify `externalTypesPath = "../path/to/external-types"`, the generated file will contain `import { Type } from "<relative_path_to_external_types_parent_dir>/external-types"`. This is to allow for easier integration with other tools that may expect a specific file extension.
+> [!Note]
+> The filename (**including extension**) specified in `externalTypesPath` will be copied to the generated file exactly. For example, if you specify `externalTypesPath = "../path/to/external-types.js"`, the generated file will contain `import { Type } from "<relative_path_to_external_types_parent_dir>/external-types.js"`. If you specify `externalTypesPath = "../path/to/external-types"`, the generated file will contain `import { Type } from "<relative_path_to_external_types_parent_dir>/external-types"`. This is to allow for easier integration with other tools that may expect a specific file extension.
 
 ## Example
 
