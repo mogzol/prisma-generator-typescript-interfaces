@@ -5,13 +5,13 @@
 // ========================
 
 generator withConfig {
-  provider = "tsx generator.ts"
+  provider = "tsx src/generator.ts"
   output   = "withConfig.ts"
   prettier = true
 }
 
 generator withoutConfig {
-  provider              = "tsx generator.ts"
+  provider              = "tsx src/generator.ts"
   output                = "withoutConfig.ts"
   prettier              = true
   resolvePrettierConfig = false

@@ -9,16 +9,16 @@
     "url": "https://github.com/mogzol/prisma-generator-typescript-interfaces"
   },
   "type": "module",
-  "main": "generator.js",
+  "main": "dist/generator.js",
   "files": [
-    "generator.js"
+    "dist"
   ],
   "bin": {
-    "prisma-generator-typescript-interfaces": "generator.js"
+    "prisma-generator-typescript-interfaces": "dist/generator.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "postbuild": "node -e \"g='generator.js';f=require('fs');f.writeFileSync(g,'#!/usr/bin/env node\\n'+f.readFileSync(g))\"",
+    "postbuild": "node -e \"g='dist/generator.js';f=require('fs');f.writeFileSync(g,'#!/usr/bin/env node\\n'+f.readFileSync(g))\"",
     "clean": "rimraf --glob generator.js **/__TEST_TMP__",
     "generate": "prisma generate --schema=prisma/example.prisma",
     "lint": "prettier --check . && eslint . && echo 'Linting complete.'",

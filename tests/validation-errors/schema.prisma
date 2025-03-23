@@ -3,13 +3,19 @@
 // ========================
 
 generator typescriptInterfaces {
-  provider    = "tsx generator.ts"
-  modelType   = "bad"
-  enumType    = "incorrect"
-  dateType    = "wrong"
-  bigIntType  = "values"
-  decimalType = "go"
-  bytesType   = "here"
+  provider              = "tsx src/generator.ts"
+  modelType             = "bad"
+  enumType              = "incorrect"
+  // dateType              = "wrong"
+  // bigIntType            = "values"
+  // decimalType           = "go"
+  // bytesType             = "here"
+  exportEnums           = "this"
+  optionalRelations     = "is"
+  omitRelations         = "not"
+  optionalNullables     = "a"
+  prettier              = "boolean"
+  resolvePrettierConfig = "value"
 }
 
 // ========================

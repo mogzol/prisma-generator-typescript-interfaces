@@ -11,13 +11,13 @@ generator client {
 }
 
 generator typescriptInterfaces {
-  provider = "tsx generator.ts"
+  provider = "tsx src/generator.ts"
   output   = "example.ts"
   prettier = true
 }
 
 generator typescriptInterfacesJson {
-  provider    = "tsx generator.ts"
+  provider    = "tsx src/generator.ts"
   output      = "exampleJson.ts"
   modelSuffix = "Json"
   dateType    = "string"

@@ -1,7 +1,9 @@
 Error:
+Invalid exportEnums: this
+Invalid optionalRelations: is
+Invalid omitRelations: not
+Invalid optionalNullables: a
+Invalid prettier: boolean
+Invalid resolvePrettierConfig: value
 Invalid modelType: bad
 Invalid enumType: incorrect
-Invalid dateType: wrong
-Invalid bigIntType: values
-Invalid decimalType: go
-Invalid bytesType: here
