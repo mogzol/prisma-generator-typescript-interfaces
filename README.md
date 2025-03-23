@@ -49,7 +49,39 @@ To use external types, add the `externalTypesPath` option pointing to a file con
 ```prisma
 generator typescriptInterfaces {
   provider = "prisma-generator-typescript-interfaces"
-  externalTypesPath = "../path/to/external-types.js"
+  externalTypesPath = "./external-types.js"
+  output = "./dto/interfaces.ts"
+}
+
+model Person {
+  id        Int      @id @default(autoincrement())
+  name      String
+  age       Int
+  email     String?
+  addressId Int
+  address   Address  @relation(fields: [addressId], references: [id])
+  friendsOf Person[] @relation("Friends")
+  friends   Person[] @relation("Friends")
+  /// [DataJson]
+  data      Json?
+}
+```
+
+...will generate the following output at `./dto/interfaces.ts`
+
+```typescript
+import { DataJson } from "../external-types.js"; // Note the relative path change
+
+export interface Person {
+  id: number;
+  name: string;
+  age: number;
+  email: string | null;
+  addressId: number;
+  address?: Address;
+  friendsOf?: Person[];
+  friends?: Person[];
+  data?: DataJson | null;
 }
 ```
 
