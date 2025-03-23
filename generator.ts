@@ -1,7 +1,7 @@
 import type { DMMF } from "@prisma/generator-helper";
 import generatorHelper from "@prisma/generator-helper";
 import { mkdir, writeFile } from "node:fs/promises";
-import { dirname } from "node:path";
+import { dirname, resolve, relative, join } from "node:path";
 
 // Need to use default export for ESM compatibility
 const { generatorHandler } = generatorHelper;
@@ -28,6 +28,7 @@ interface Config {
   optionalNullables: boolean;
   prettier: boolean;
   resolvePrettierConfig: boolean;
+  externalTypesPath?: string;
 }
 
 // Map of Prisma scalar types to Typescript type getters
@@ -77,6 +78,9 @@ function validateConfig(config: Config) {
   ) {
     errors.push(`Invalid bytesType: ${config.bytesType}`);
   }
+  if (config.externalTypesPath && typeof config.externalTypesPath !== "string") {
+    errors.push(`Invalid externalTypesPath: ${config.externalTypesPath}`);
+  }
   if (errors.length > 0) {
     throw new Error(errors.join("\n"));
   }
@@ -118,13 +122,22 @@ function getModelTs(
   enumNameMap: Map<string, string>,
   typeNameMap: Map<string, string>,
   usedCustomTypes: Set<keyof typeof CUSTOM_TYPES>,
+  externalTypes: Set<string>,
 ): string {
   const fields = modelData.fields
-    .map(({ name, kind, type, isRequired, isList }) => {
+    .map(({ name, kind, type, isRequired, isList, documentation }) => {
       const getDefinition = (resolvedType: string, optional = false) =>
         "  " +
         `${name}${optional || (!isRequired && config.optionalNullables) ? "?" : ""}: ` +
         `${resolvedType}${isList ? "[]" : ""}${!isRequired ? " | null" : ""};`;
+
+      const docParser = /^\s*?\[\s*?(?<externalType>.+?)\s*?\]/;
+      const { externalType } = docParser.exec(documentation ?? "")?.groups ?? {};
+
+      if (externalType) {
+        externalTypes.add(externalType);
+        return getDefinition(externalType);
+      }
 
       switch (kind) {
         case "scalar": {
@@ -214,12 +227,14 @@ generatorHandler({
 
     validateConfig(config);
 
+    const schemaPath = options.schemaPath;
     const datamodel = options.dmmf.datamodel;
     const models = datamodel.models;
     const enums = datamodel.enums;
     const types = datamodel.types;
 
     const usedCustomTypes = new Set<keyof typeof CUSTOM_TYPES>();
+    const externalTypes = new Set<string>();
 
     const enumNameMap = new Map<string, string>(
       enums.map((e) => [e.name, `${config.enumPrefix}${e.name}${config.enumSuffix}`]),
@@ -234,7 +249,7 @@ generatorHandler({
     const enumsTs = enums.map((e) => getEnumTs(config, e, enumNameMap));
     // Types and Models are essentially the same thing, so we can run both through getModelTs
     const modelsTs = [...models, ...types].map((m) =>
-      getModelTs(config, m, modelNameMap, enumNameMap, typeNameMap, usedCustomTypes),
+      getModelTs(config, m, modelNameMap, enumNameMap, typeNameMap, usedCustomTypes, externalTypes),
     );
     const customTypesTs = Array.from(usedCustomTypes).map((t) => CUSTOM_TYPES[t]);
 
@@ -250,6 +265,17 @@ generatorHandler({
 
     const outputFile = options.generator.output?.value as string;
     const outputDir = dirname(outputFile);
+
+    if (config.externalTypesPath && externalTypes.size > 0) {
+      // Resolve the path to the external types file relative to the output file
+      // and add the import statement;
+      const absolutePath = resolve(dirname(schemaPath), config.externalTypesPath);
+      const relativeDir = relative(absolutePath, outputDir);
+      const relativePath = join(relativeDir, config.externalTypesPath);
+
+      const importStatement = `import {\n  ${Array.from(externalTypes).join(",\n  ")}\n} from "${relativePath}";\n\n`;
+      ts = `${importStatement}${ts}`;
+    }
 
     if (config.prettier) {
       // Prettier is imported inside this if so that it's not a required dependency

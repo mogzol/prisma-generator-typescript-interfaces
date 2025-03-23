@@ -42,6 +42,21 @@ generator typescriptInterfaces {
 
 Note that `bigint` types don't have a default `toJSON` method, so the above assumes that you are converting them to strings somewhere along the line.
 
+### External Types
+
+To use external types, add the `externalTypesPath` option pointing to a file containing TypeScript type definitions and annotate fields in your Prisma schema with triple slash comments of the form `/// [Type]`, where `Type` is a type or interface exported from the specified path. For example:
+
+```prisma
+generator typescriptInterfaces {
+  provider = "prisma-generator-typescript-interfaces"
+  externalTypesPath = "../path/to/external-types.js"
+}
+```
+
+The path to the external types file will be resolved relative to the output path.
+
+> ![Note] The filename (**including extension**) specified in `externalTypesPath` will be copied to the generated file exactly. For example, if you specify `externalTypesPath = "../path/to/external-types.js"`, the generated file will contain `import { Type } from "<relative_path_to_external_types_parent_dir>/external-types.js"`. If you specify `externalTypesPath = "../path/to/external-types"`, the generated file will contain `import { Type } from "<relative_path_to_external_types_parent_dir>/external-types"`. This is to allow for easier integration with other tools that may expect a specific file extension.
+
 ## Example
 
 Here is an example of a configuration that generates two separate outputs, `interfaces.ts` with types compatible with the Prisma client types, and a second `json-interfaces.ts` file with types matching the output of `JSON.stringify` when run on the models. Both files are output to the `src/dto` folder (which will be created if it doesn't exist) and are formatted using Prettier. The models in `json-interfaces.ts` also get a `Json` suffix attached to them.
@@ -327,6 +342,7 @@ type ArrayObject = { [index: number]: number } & { length?: never };
 | optionalNullables     |                                        `boolean`                                        |                                  `false`                                   | Controls whether nullable fields are optional. Nullable fields are always defined with `\| null` in their type definition, but if this is `true`, they will also use `?:`.                                    |
 | prettier              |                                        `boolean`                                        |                                  `false`                                   | Formats the output using Prettier. Setting this to `true` requires that the `prettier` package is available.                                                                                                  |
 | resolvePrettierConfig |                                        `boolean`                                        |                                   `true`                                   | Tries to find and use a Prettier config file relative to the output location.                                                                                                                                 |
+| externalTypesPath     |                                        `string`                                         |                                    `""`                                    | The path to a file containing TypeScript type definitions to be imported and used in the generated file.                                                                                                      |
 
 ## Issues
 
