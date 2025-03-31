@@ -5,7 +5,7 @@ import tseslint from "typescript-eslint";
 import eslintConfigPrettier from "eslint-config-prettier";
 
 export default tseslint.config({
-  files: ["*.ts"],
+  files: ["src/**/*.ts"],
   extends: [
     eslint.configs.recommended,
     eslintConfigPrettier,

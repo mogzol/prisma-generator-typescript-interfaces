@@ -1,0 +1,21 @@
+// ========================
+// Generator Tests
+// ========================
+
+generator typescriptInterfaces {
+  provider = "tsx src/generator.ts"
+}
+
+// ========================
+// Prisma Schema
+// ========================
+
+datasource db {
+  provider = "postgresql"
+  url      = ""
+}
+
+model User {
+  /// [number | BigInt]
+  id Int @id
+}

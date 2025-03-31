@@ -1,7 +1,15 @@
 Error:
-Invalid modelType: bad
-Invalid enumType: incorrect
-Invalid dateType: wrong
-Invalid bigIntType: values
-Invalid decimalType: go
-Invalid bytesType: here
+Invalid booleanType: ""
+Invalid enumType: "incorrect"
+Invalid exportEnums: "this"
+Invalid intType: ["wrong"]
+Invalid modelType: "bad"
+Invalid omitRelations: "not"
+Invalid optionalNullables: "a"
+Invalid optionalRelations: "is"
+Invalid prettier: "boolean"
+Invalid resolvePrettierConfig: "value"
+Invalid stringType: []
+Invalid typeImportPath: [["nested"],"type"]
+Unknown config property: "badOption"
+Unknown config property: "wrongOption"

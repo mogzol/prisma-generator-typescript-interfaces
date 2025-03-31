@@ -1,4 +1,7 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["generator.ts"]
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "include": ["src"]
 }

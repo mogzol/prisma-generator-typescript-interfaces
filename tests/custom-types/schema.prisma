@@ -1,0 +1,206 @@
+// These tests cover most of the generator's options
+
+// ========================
+// Generator Tests
+// ========================
+
+generator builtInTypes {
+  provider = "tsx src/generator.ts"
+  output   = "builtInTypes.ts"
+
+  // The built-in types work on any of the type options, so it doesn't really matter which we use
+  // here, we are just testing that the built-in types get added to the output.
+  stringType  = "ArrayObject"
+  booleanType = "BufferObject"
+  intType     = "Decimal"
+  floatType   = "JsonValue"
+}
+
+generator inlineTypes {
+  provider    = "tsx src/generator.ts"
+  output      = "inlineTypes.ts"
+  stringType  = "CustomString"
+  booleanType = "CustomBoolean"
+  intType     = "CustomInt"
+  floatType   = "CustomFloat"
+  jsonType    = "CustomJson"
+  dateType    = "CustomDate"
+  bigIntType  = "CustomBigInt"
+  decimalType = "CustomDecimal"
+  bytesType   = "CustomBytes"
+}
+
+generator complexInlineTypes {
+  provider = "tsx src/generator.ts"
+  output   = "complexInlineTypes.ts"
+
+  // These won't get wrapped in parenthesis
+  stringType  = "{ value: string }"
+  floatType   = "[number, number]"
+  jsonType    = "{ [k: string]: string }"
+  decimalType = "Record<number, string>"
+
+  // These will get wrapped in parenthesis
+  booleanType = "boolean | \"true\" | \"false\""
+  intType     = "string | number"
+  dateType    = "string & { isDate: true }"
+  bigIntType  = "number & string"
+  bytesType   = "(s: string, n: number) => number[]"
+}
+
+generator definedTypes {
+  provider    = "tsx src/generator.ts"
+  output      = "definedTypes.ts"
+  stringType  = "DefinedString:string"
+  booleanType = "DefinedBoolean:boolean | \"true\" | \"false\""
+  intType     = "DefinedInt:number"
+  floatType   = "DefinedFloat:[number, number]"
+  jsonType    = "DefinedJson:{ [k: string]: string | number | DefinedJson }"
+  dateType    = "DefinedDate:Date"
+  bigIntType  = "DefinedBigInt:string & { isBigInt: true }"
+  decimalType = "DefinedDecimal:{ valueOf: () => string }"
+  bytesType   = "DefinedBytes:number[]"
+}
+
+generator importedTypes {
+  provider       = "tsx src/generator.ts"
+  output         = "importedTypes.ts"
+  typeImportPath = "../types.js"
+  stringType     = "import:ImportedString"
+  booleanType    = "import:ImportedBoolean"
+  intType        = "import:ImportedInt"
+  floatType      = "import:ImportedFloat"
+  jsonType       = "import:ImportedJson"
+  dateType       = "import:ImportedDate"
+  bigIntType     = "import:ImportedBigInt"
+  decimalType    = "import:ImportedDecimal"
+  bytesType      = "import:ImportedBytes"
+  prettier       = true // Also test that prettier formatting works with import
+}
+
+generator importSorting {
+  provider       = "tsx src/generator.ts"
+  output         = "importSorting.ts"
+  typeImportPath = "../types.js"
+  stringType     = "import:Aa"
+  booleanType    = "import:Ba"
+  intType        = "import:CCC"
+  floatType      = "import:A"
+  jsonType       = "import:AAA"
+  dateType       = "import:Ccc"
+  bigIntType     = "import:ccc"
+  decimalType    = "import:ab"
+  bytesType      = "import:Last"
+}
+
+generator reusedImportedType {
+  provider       = "tsx src/generator.ts"
+  output         = "reusedImportedType.ts"
+  typeImportPath = "../types.js"
+  stringType     = "NotBuiltIn"
+  booleanType    = "NotBuiltIn:unknown" // Should get overridden by import
+  intType        = "import:NotBuiltIn"
+  floatType      = "NotBuiltIn"
+  jsonType       = "JsonValue:Record<string, unknown>" // Should get overridden by import
+  dateType       = "import:JsonValue"
+  bigIntType     = "import:JsonValue"
+  decimalType    = "JsonValue:Record<string, unknown>" // Should get overridden by import
+  bytesType      = "JsonValue"
+}
+
+generator reusedDefinedType {
+  provider    = "tsx src/generator.ts"
+  output      = "reusedDefinedType.ts"
+  stringType  = "NotBuiltIn"
+  booleanType = "NotBuiltIn:unknown"
+  intType     = "NotBuiltIn"
+  floatType   = "NotBuiltIn"
+  jsonType    = "JsonValue:Record<string, unknown>"
+  dateType    = "JsonValue"
+  bigIntType  = "JsonValue:Record<string, unknown>"
+  decimalType = "JsonValue"
+  bytesType   = "JsonValue"
+}
+
+// ========================
+// Prisma Schema
+// ========================
+
+datasource db {
+  provider = "postgresql"
+  url      = ""
+}
+
+enum Gender {
+  Male
+  Female
+  Other
+}
+
+enum DataTest {
+  Apple
+  Banana
+  Orange
+  Pear
+}
+
+model Person {
+  id        Int      @id @default(autoincrement())
+  name      String
+  age       Int
+  email     String?
+  gender    Gender
+  addressId Int
+  address   Address  @relation(fields: [addressId], references: [id])
+  friends   Person[] @relation("Friends")
+  friendsOf Person[] @relation("Friends")
+  data      Data?
+}
+
+model Address {
+  id           Int      @id
+  streetNumber Int
+  streetName   String
+  city         String
+  isBilling    Boolean
+  people       Person[]
+}
+
+model Data {
+  id           String   @id @default(uuid()) @db.Uuid
+  stringField  String
+  booleanField Boolean
+  intField     Int
+  floatField   Float
+  jsonField    Json
+  dateField    DateTime
+  bigIntField  BigInt
+  decimalField Decimal
+  bytesField   Bytes
+  enumField    DataTest
+
+  optionalStringField  String?
+  optionalBooleanField Boolean?
+  optionalIntField     Int?
+  optionalFloatField   Float?
+  optionalJsonField    Json?
+  optionalDateField    DateTime?
+  optionalBigIntField  BigInt?
+  optionalDecimalField Decimal?
+  optionalBytesField   Bytes?
+  optionalEnumField    DataTest?
+
+  stringArrayField  String[]
+  booleanArrayField Boolean[]
+  intArrayField     Int[]
+  floatArrayField   Float[]
+  jsonArrayField    Json[]
+  dateArrayField    DateTime[]
+  bigIntArrayField  BigInt[]
+  decimalArrayField Decimal[]
+  bytesArrayField   Bytes[]
+  enumArrayField    DataTest[]
+
+  personId Int    @unique
+  person   Person @relation(fields: [personId], references: [id])
+}

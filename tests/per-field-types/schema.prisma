@@ -1,0 +1,118 @@
+// ========================
+// Generator Tests
+// ========================
+
+generator perFieldTypes {
+  provider       = "tsx src/generator.ts"
+  output         = "./perFieldTypes.ts"
+  typeImportPath = "../types.js"
+}
+
+generator withCustomTypes {
+  provider       = "tsx src/generator.ts"
+  output         = "./withCustomTypes.ts"
+  typeImportPath = "../types.js"
+  stringType     = "\"constant string\""
+  intType        = "DefinedInt:number"
+  booleanType    = "import:ImportedBoolean"
+  prettier       = true
+}
+
+// ========================
+// Prisma Schema
+// ========================
+
+datasource db {
+  provider = "postgresql"
+  url      = ""
+}
+
+enum Gender {
+  Male
+  Female
+  Other
+}
+
+model Person {
+  id        Int      @id @default(autoincrement())
+  name      String
+  age       Int
+  email     String?
+  gender    Gender
+  addressId Int
+  address   Address  @relation(fields: [addressId], references: [id])
+  friendsOf Person[] @relation("Friends")
+  friends   Person[] @relation("Friends")
+  data      Data?
+}
+
+model Address {
+  id           Int      @id
+  streetNumber Int
+  streetName   String
+  /// [MyString] - Should re-use the type defined in Data
+  city         String
+  isBilling    Boolean
+  people       Person[]
+}
+
+model Data {
+  id String @id @default(uuid()) @db.Uuid
+
+  /// !["constant string"]
+  stringField  String
+  booleanField Boolean
+  intField     Int
+  /// ![bigint | number]
+  bigIntField  BigInt
+  /// [DefinedCustomType:string | number]
+  floatField   Float
+  decimalField Decimal
+  dateField    DateTime
+  /// [DefinedInt] - Should reuse type from intType if specified, or import if not
+  jsonField    Json
+  /// [ImportedBoolean] - Should reuse type from booleanType type if specified, or import if not
+  bytesField   Bytes
+  /// [CustomFieldType]
+  customField  Json
+
+  /// ![string & { extra: unknown }] - Complex type, should get wrapped in parenthesis
+  optionalStringField  String?
+  /// [MyString:string & { isString: true }] - Defined types don't need parenthesis
+  optionalBooleanField Boolean?
+  /// ![BigInt] - Simple types also don't need parenthesis
+  optionalIntField     Int?
+  /// ![Record<string, { [key: string]: unknown }>] - Also a simple type
+  optionalBigIntField  BigInt?
+  optionalFloatField   Float?
+  /// [Decimal] - Should use the built-in Decimal type
+  optionalDecimalField Decimal?
+  optionalDateField    DateTime?
+  /// [import:JsonValue] - Should force JsonValue to be imported instead of using built-in (undocumented)
+  optionalJsonField    Json?
+  optionalBytesField   Bytes?
+  /// [OptionalCustomFieldType]
+  optionalCustomField  Json?
+
+  /// ![string & { customString: true }] - Shouldn't get brackets added at the end
+  stringArrayField  String[]
+  /// ![boolean | "true" | "false"] - Also shouldn't get brackets added at the end
+  booleanArrayField Boolean[]
+  /// [DefinedArrayType:{ isInt: "true"; value: number }] - Should get brackets added at the end
+  intArrayField     Int[]
+  /// [DefinedArrayType] - Should reuse the type from above
+  bigIntArrayField  BigInt[]
+  /// ![DefinedArrayType] - Should also reuse the type from above, but without brackets (undocumented)
+  floatArrayField   Float[]
+  /// ![LiteralDefinedArrayType:unknown] - Shouldn't get brackets added at the end (undocumented)
+  decimalArrayField Decimal[]
+  /// ![import:DateArrayType] - Should import and not include brackets (undocumented)
+  dateArrayField    DateTime[]
+  jsonArrayField    Json[]
+  bytesArrayField   Bytes[]
+  /// [CustomArrayFieldType]
+  customArrayField  Json[]
+
+  personId Int    @unique
+  person   Person @relation(fields: [personId], references: [id])
+}

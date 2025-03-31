@@ -10,3 +10,8 @@ export type CustomArrayFieldType = [
   ["1","2"],
   ["3","4"]
 ]
+
+export type JsonValue = unknown;
+export type ImportedBoolean = boolean;
+export type DefinedInt = number;
+export type DateArrayType = Date[];

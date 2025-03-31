@@ -9,16 +9,16 @@
     "url": "https://github.com/mogzol/prisma-generator-typescript-interfaces"
   },
   "type": "module",
-  "main": "generator.js",
+  "main": "dist/generator.js",
   "files": [
-    "generator.js"
+    "dist"
   ],
   "bin": {
-    "prisma-generator-typescript-interfaces": "generator.js"
+    "prisma-generator-typescript-interfaces": "dist/generator.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "postbuild": "node -e \"g='generator.js';f=require('fs');f.writeFileSync(g,'#!/usr/bin/env node\\n'+f.readFileSync(g))\"",
+    "postbuild": "node -e \"g='dist/generator.js';f=require('fs');f.writeFileSync(g,'#!/usr/bin/env node\\n'+f.readFileSync(g))\"",
     "clean": "rimraf --glob generator.js **/__TEST_TMP__",
     "generate": "prisma generate --schema=prisma/example.prisma",
     "lint": "prettier --check . && eslint . && echo 'Linting complete.'",
@@ -30,10 +30,10 @@
     "@prisma/generator-helper": "^5 || ^6"
   },
   "devDependencies": {
-    "@eslint/js": "^9.22.0",
+    "@eslint/js": "^9.23.0",
     "@prisma/client": "^6.5.0",
-    "@types/node": "^22.13.10",
-    "eslint": "^9.22.0",
+    "@types/node": "^22.13.14",
+    "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
     "husky": "^9.1.7",
     "prettier": "^3.5.3",
@@ -41,7 +41,7 @@
     "rimraf": "^6.0.1",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.26.1"
+    "typescript-eslint": "^8.28.0"
   },
   "keywords": [
     "prisma",
