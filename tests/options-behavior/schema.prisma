@@ -108,18 +108,6 @@ generator bytesBuffer {
   bytesType = "Buffer"
 }
 
-generator bytesBufferObject {
-  provider  = "tsx src/generator.ts"
-  output    = "bytesBufferObject.ts"
-  bytesType = "BufferObject"
-}
-
-generator bytesArrayObject {
-  provider  = "tsx src/generator.ts"
-  output    = "bytesArrayObject.ts"
-  bytesType = "ArrayObject"
-}
-
 generator enumType {
   provider = "tsx src/generator.ts"
   output   = "enumType.ts"

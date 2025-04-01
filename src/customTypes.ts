@@ -2,10 +2,7 @@ import type { DMMF } from "@prisma/generator-helper";
 import { Config } from "./config.js";
 
 // Define some common custom types as built-in so that users don't need to manually define them.
-// TODO: remove ArrayObject/BufferObject
 const BUILTIN_CUSTOM_TYPES = {
-  ArrayObject: "{ [index: number]: number } & { length?: never }",
-  BufferObject: '{ type: "Buffer"; data: number[] }',
   Decimal: "{ valueOf(): string }",
   JsonValue:
     "string | number | boolean | { [key in string]?: JsonValue } | Array<JsonValue> | null",

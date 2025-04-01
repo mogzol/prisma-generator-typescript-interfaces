@@ -10,10 +10,8 @@ generator builtInTypes {
 
   // The built-in types work on any of the type options, so it doesn't really matter which we use
   // here, we are just testing that the built-in types get added to the output.
-  stringType  = "ArrayObject"
-  booleanType = "BufferObject"
-  intType     = "Decimal"
-  floatType   = "JsonValue"
+  stringType  = "Decimal"
+  booleanType = "JsonValue"
 }
 
 generator inlineTypes {
