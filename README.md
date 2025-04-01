@@ -326,7 +326,7 @@ Please report any issues to the [issues](https://github.com/mogzol/prisma-genera
 
 ## Developing
 
-All the code for this generator is contained within the `generator.ts` file. You can build the generator by running `npm install` then `npm run build`.
+All the code for this generator is contained within the `src` directory. You can build the generator by running `npm install` then `npm run build`.
 
 ### Tests
 

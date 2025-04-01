@@ -1,3 +1,21 @@
+# 3.0.0
+
+- **This release is still in development!**
+- Allow full control of the types used during generation, including allowing per-field types. See [Custom Types](CUSTOM_TYPES.md) for details.
+- **BREAKING CHANGE**: The `BufferObject` and `ArrayObject` built-in types for `Bytes` fields have been removed. Their behavior can be replicated using custom types:
+
+  ```prisma
+  generator typescriptInterfaces {
+    provider = "prisma-generator-typescript-interfaces"
+
+    // To get the old 'BufferObject' behavior:
+    bytesType = "BufferObject:{ type: \"Buffer\"; data: number[] }"
+
+    // To get the old 'ArrayObject' behavior:
+    bytesType = "ArrayObject:{ [index: number]: number } & { length?: never }"
+  }
+  ```
+
 ## 2.1.0
 
 - Stop enum fields from being marked `readonly` when using `enumType = "object"` - [#14](https://github.com/mogzol/prisma-generator-typescript-interfaces/pull/14)
@@ -12,7 +30,7 @@
 
 # 2.0.0
 
-- **BREAKING**: Add `Uint8Array` option for `bytesType`, and make it the default. This is to match the changes made in [Prisma v6](https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions/upgrading-to-prisma-6#usage-of-buffer). If you are still using Prisma v5 and want the generated types to be type-compatible with the Prisma client, you will now need to explicitly set `bytesType` to `Buffer`.
+- **BREAKING CHANGE**: Add `Uint8Array` option for `bytesType`, and make it the default. This is to match the changes made in [Prisma v6](https://www.prisma.io/docs/orm/more/upgrade-guides/upgrading-versions/upgrading-to-prisma-6#usage-of-buffer). If you are still using Prisma v5 and want the generated types to be type-compatible with the Prisma client, you will now need to explicitly set `bytesType` to `Buffer`.
 - Add `ArrayObject` option for `bytesType`, which matches the output of running `JSON.stringify` on a `Uint8Array`.
 - Update dependency declaration for `@prisma/generator-helper` to allow either v5 or v6 of the library, as either will work.
 
