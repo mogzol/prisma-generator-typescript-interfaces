@@ -1,3 +1,6 @@
+// Note that some of the behavior tested in this file is intentionally undocumented, because it is
+// unintuitive not very useful, but we still want to make sure it works as expected.
+
 // ========================
 // Generator Tests
 // ========================
@@ -16,6 +19,14 @@ generator withCustomTypes {
   intType        = "DefinedInt:number"
   booleanType    = "import:ImportedBoolean"
   prettier       = true
+}
+
+generator perFieldTypesDisabled {
+  provider      = "tsx src/generator.ts"
+  output        = "./perFieldTypesDisabled.ts"
+  perFieldTypes = false
+  stringType    = "\"constant string\""
+  intType       = "DefinedInt:number"
 }
 
 // ========================
@@ -109,6 +120,7 @@ model Data {
   /// ![import:DateArrayType] - Should import and not include brackets (undocumented)
   dateArrayField    DateTime[]
   jsonArrayField    Json[]
+  /// ![string[]] - Should be able to use array types in literal types
   bytesArrayField   Bytes[]
   /// [CustomArrayFieldType]
   customArrayField  Json[]

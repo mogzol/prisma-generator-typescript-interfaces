@@ -3,21 +3,21 @@
 // ========================
 
 generator typescriptInterfaces {
-  provider              = "tsx src/generator.ts"
-  modelType             = "bad"
-  enumType              = incorrect
-  typeImportPath        = [["nested"], type]
-  intType               = ["wrong"]
-  wrongOption           = ["an", option, ""]
-  stringType            = []
-  booleanType           = ""
-  badOption             = "not"
-  exportEnums           = "this"
-  optionalRelations     = is
-  omitRelations         = "not"
-  optionalNullables     = "a"
-  prettier              = boolean
-  resolvePrettierConfig = "value"
+  provider           = "tsx src/generator.ts"
+  modelType          = "bad"
+  enumType           = incorrect
+  typeImportPath     = [["nested"], type]
+  intType            = ["wrong"]
+  wrongOption        = ["an", option, ""]
+  stringType         = []
+  booleanType        = ""
+  badOption          = "not"
+  exportEnums        = "this"
+  optionalRelations  = is
+  omitRelations      = "not"
+  optionalNullables  = "a"
+  prettier           = true
+  prettierConfigPath = "/invalid/path!"
 }
 
 // ========================

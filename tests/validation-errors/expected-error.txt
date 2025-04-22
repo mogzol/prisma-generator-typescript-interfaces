@@ -1,15 +1,15 @@
 Error:
-Invalid booleanType: ""
-Invalid enumType: "incorrect"
-Invalid exportEnums: "this"
-Invalid intType: ["wrong"]
-Invalid modelType: "bad"
-Invalid omitRelations: "not"
-Invalid optionalNullables: "a"
-Invalid optionalRelations: "is"
-Invalid prettier: "boolean"
-Invalid resolvePrettierConfig: "value"
-Invalid stringType: []
-Invalid typeImportPath: [["nested"],"type"]
-Unknown config property: "badOption"
-Unknown config property: "wrongOption"
+prisma-generator-typescript-interfaces error: Invalid config:
+ - Invalid booleanType: ""
+ - Invalid enumType: "incorrect"
+ - Invalid exportEnums: "this"
+ - Invalid intType: ["wrong"]
+ - Invalid modelType: "bad"
+ - Invalid omitRelations: "not"
+ - Invalid optionalNullables: "a"
+ - Invalid optionalRelations: "is"
+ - Invalid stringType: []
+ - Invalid typeImportPath: [["nested"],"type"]
+ - Unknown config property: "badOption"
+ - Unknown config property: "wrongOption"
+ - prettierConfigPath does not exist: "/invalid/path!"

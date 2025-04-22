@@ -129,7 +129,7 @@ export interface MyData {
 
 ## Per-field Types
 
-In addition to specifying custom types in the generator config options, they can also be specified on individual fields in the schema. This is done using a syntax similar to that used by [prisma-json-types-generator](https://www.npmjs.com/package/prisma-json-types-generator), where field types are specified by wrapping them in square brackets in the documentation of a field:
+In addition to specifying custom types in the generator config options, they can also be specified on individual fields in the schema, as long as the `perFieldTypes` option is `true` (which is the default). Per-field types use a syntax similar to that used by [prisma-json-types-generator](https://www.npmjs.com/package/prisma-json-types-generator), where field types are specified in square brackets in the documentation of a field:
 
 ```prisma
 generator typescriptInterfaces {
@@ -157,16 +157,17 @@ export interface MyData {
 }
 ```
 
-Note that these types are treated as import types by default, and so require the `typeImportPath` option to be set. See [imported types](#imported-types) for more information.
+Note that these type annotations must be at the start of a field's documentation, and must use three slashes `///`, not two like a regular comment. Regular annotations must be wrapped in square brackets (`[` `]`), and literal type annotations must be wrapped in square brackets with an exclamation point (`![` `]`).
 
-You can also specify literal types by putting an exclamation point before the square bracket, like with `myBoolean` in that example. Doing this will cause the value inside the square brackets to be used directly as the type, and not be imported.
+Regular type annotations, like with `myJson` in the example, are treated as imported types and require the `typeImportPath` option to be set. See [imported types](#imported-types) for more information.
 
-You can also use [defined types](#defined-types) with per-field types, using the same syntax, just inside the square brackets:
+Literal type annotations, like with `myBoolean` in that example, are used directly as the type. Everything between the first and last square bracket in the documentation will be copied verbatim into the field's type definition.
+
+You can also use [defined types](#defined-types) with per-field types, using the same syntax as before, just inside the square brackets:
 
 ```prisma
 generator typescriptInterfaces {
   provider       = "prisma-generator-typescript-interfaces"
-  typeImportPath = "./myTypes.js"
 }
 
 model MyData {

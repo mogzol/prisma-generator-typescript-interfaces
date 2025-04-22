@@ -1,7 +1,7 @@
 import type { DMMF } from "@prisma/generator-helper";
 import type { Config } from "./config.js";
 
-/** Get the Typescript code representing a Prisma Enum */
+/** Get the TypeScript code representing a Prisma Enum */
 export function getEnumTs(
   config: Config,
   enumData: DMMF.DatamodelEnum,

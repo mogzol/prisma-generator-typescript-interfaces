@@ -1,0 +1,5 @@
+Error:
+prisma-generator-typescript-interfaces error: Type 'import:BadIntImport' requires an import, but typeImportPath is not set!
+
+
+prisma-generator-typescript-interfaces error: User.id has custom type '[BadFieldImport]' which must be imported, but typeImportPath is not set!

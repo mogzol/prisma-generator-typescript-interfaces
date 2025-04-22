@@ -8,7 +8,7 @@ import { CustomTypes } from "./customTypes.js";
 // those in parenthesis, and detecting and excluding all such cases would be too complex.
 const complexTypeRegex = /[|&?]|=>/;
 
-/** Get the Typescript code representing a Prisma Model */
+/** Get the TypeScript code representing a Prisma Model */
 export function getModelTs(
   config: Config,
   modelData: DMMF.Model,

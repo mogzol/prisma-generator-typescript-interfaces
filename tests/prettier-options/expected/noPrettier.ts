@@ -9,10 +9,4 @@ export interface User {
   updatedAt: Date;
 }
 
-type JsonValue =
-  | string
-  | number
-  | boolean
-  | { [key in string]?: JsonValue }
-  | Array<JsonValue>
-  | null;
+type JsonValue = string | number | boolean | { [key in string]?: JsonValue } | Array<JsonValue> | null;

@@ -1,0 +1,30 @@
+// The expected error on this test has the same line twice, since both of these generators should
+// fail with the same error message
+
+// ========================
+// Generator Tests
+// ========================
+
+generator configImport {
+  provider      = "tsx src/generator.ts"
+  intType       = "import:BadIntImport"
+  perFieldTypes = false
+}
+
+generator perFieldImport {
+  provider = "tsx src/generator.ts"
+}
+
+// ========================
+// Prisma Schema
+// ========================
+
+datasource db {
+  provider = "postgresql"
+  url      = ""
+}
+
+model User {
+  /// [BadFieldImport]
+  id Int @id
+}

@@ -63,7 +63,7 @@ export interface Data {
   decimalArrayField: LiteralDefinedArrayType;
   dateArrayField: DateArrayType;
   jsonArrayField: JsonValue[];
-  bytesArrayField: Uint8Array[];
+  bytesArrayField: string[];
   customArrayField: CustomArrayFieldType[];
   personId: DefinedInt;
   person?: Person;

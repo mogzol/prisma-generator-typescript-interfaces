@@ -4,6 +4,15 @@ export interface User {
     id: string
     name: string
     email: string
+    data: JsonValue
     createdAt: Date
     updatedAt: Date
 }
+
+type JsonValue =
+    | string
+    | number
+    | boolean
+    | { [key in string]?: JsonValue }
+    | Array<JsonValue>
+    | null

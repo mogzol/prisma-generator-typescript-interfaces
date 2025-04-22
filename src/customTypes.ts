@@ -57,7 +57,9 @@ export class CustomTypes {
       Bytes: this.getCustomType(config.bytesType),
     };
 
-    this.preparePerFieldTypes(datamodel);
+    if (config.perFieldTypes) {
+      this.preparePerFieldTypes(datamodel);
+    }
   }
 
   /**
@@ -85,6 +87,12 @@ export class CustomTypes {
               );
             }
             throw e;
+          }
+
+          if (customType.import && !this.typeImportPath) {
+            throw new Error(
+              `${model.name}.${name} has custom type '[${typeString}]' which must be imported, but typeImportPath is not set!`,
+            );
           }
 
           this.perFieldTypeMap[`${model.name}.${name}`] = { customType, literal };
@@ -131,6 +139,10 @@ export class CustomTypes {
 
     const importMatch = importTypeRegex.exec(configType);
     if (importMatch) {
+      if (!this.typeImportPath) {
+        throw new Error(`Type '${configType}' requires an import, but typeImportPath is not set!`);
+      }
+
       return this.upsertCachedType({
         type: importMatch[1],
         import: true,

@@ -1,20 +1,23 @@
 # 3.0.0
 
 - **This release is still in development!**
-- Allow full control of the types used during generation, including allowing per-field types. See [Custom Types](CUSTOM_TYPES.md) for details.
-- **BREAKING CHANGE**: The `BufferObject` and `ArrayObject` built-in types for `Bytes` fields have been removed. Their behavior can be replicated using custom types:
-
+- Allow full control over the types used during generation, including allowing per-field types. See [Custom Types](CUSTOM_TYPES.md) for details.
+  - **POTENTIALLY BREAKING**: Per-field types are enabled by default. If your Prisma schema contains compatible field type annotations, they will be used and the output will be different from previous releases. If you don't want this behavior, set the `perFieldTypes` config option to `false`.
+- **BREAKING CHANGE**: Remove `BufferObject` and `ArrayObject` built-in types from `bytesType`. Their behavior can be replicated using custom types:
+  <!-- prettier-ignore -->
   ```prisma
   generator typescriptInterfaces {
     provider = "prisma-generator-typescript-interfaces"
-
+     
     // To get the old 'BufferObject' behavior:
     bytesType = "BufferObject:{ type: \"Buffer\"; data: number[] }"
-
+     
     // To get the old 'ArrayObject' behavior:
     bytesType = "ArrayObject:{ [index: number]: number } & { length?: never }"
   }
   ```
+- **BREAKING CHANGE**: Remove the `resolvePrettierConfig` option in favor of the new `prettierConfigPath` option. Now you have the option to specify a specific Prettier config file. If this option is empty (the default), then the behavior will be the same as before, where the Prettier config file will be resolved relative to the output location. Set the option to `null` to disable using Prettier config files altogether.
+- Improve config validation and generator error messages. The generator name is now included in all errors since Prisma doesn't make it clear which generator an error is coming from.
 
 ## 2.1.0
 
@@ -56,7 +59,7 @@
 
 ## 1.3.0
 
-- Add `modelType` option to control whether the model definitions are outputted as Typescript interfaces or types
+- Add `modelType` option to control whether the model definitions are outputted as TypeScript interfaces or types
 
 ## 1.2.0
 

@@ -1,3 +1,3 @@
 Error:
-User.id has an invalid custom type: [number | BigInt]
+prisma-generator-typescript-interfaces error: User.id has an invalid custom type: [number | BigInt]
 If this was meant to be a literal type, add an exclamation point: ![number | BigInt]
