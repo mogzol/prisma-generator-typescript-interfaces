@@ -28,6 +28,7 @@ interface Config {
   optionalNullables: boolean;
   prettier: boolean;
   resolvePrettierConfig: boolean;
+  includeComments: boolean;
 }
 
 // Map of Prisma scalar types to Typescript type getters
@@ -89,21 +90,26 @@ function getEnumTs(
   enumNameMap: Map<string, string>,
 ): string {
   const exportKwd = config.exportEnums ? "export " : "";
+  const enumName = enumNameMap.get(enumData.name);
+  const documentation =
+    config.includeComments && enumData.documentation
+      ? `/**\n * ${enumData.documentation.replace(/\n/g, "\n * ")}\n */\n`
+      : "";
+
   switch (config.enumType) {
     case "enum": {
       const enumValues = enumData.values.map(({ name }) => `  ${name} = "${name}"`).join(",\n");
-      return `${exportKwd}enum ${enumNameMap.get(enumData.name)} {\n${enumValues}\n}`;
+      return `${documentation}${exportKwd}enum ${enumName} {\n${enumValues}\n}`;
     }
     case "stringUnion": {
       const enumValues = enumData.values.map(({ name }) => `"${name}"`).join(" | ");
-      return `${exportKwd}type ${enumNameMap.get(enumData.name)} = ${enumValues};`;
+      return `${documentation}${exportKwd}type ${enumName} = ${enumValues};`;
     }
     case "object": {
       const enumValues = enumData.values.map(({ name }) => `  ${name}: "${name}"`).join(",\n");
-      const enumName = enumNameMap.get(enumData.name);
       const enumObjectName = `${config.enumObjectPrefix}${enumName}${config.enumObjectSuffix}`;
       const enumType = enumData.values.map(({ name }) => `"${name}"`).join(" | ");
-      return `${exportKwd}type ${enumName} = ${enumType};\n\n${exportKwd}const ${enumObjectName} = {\n${enumValues}\n} satisfies Record<string, ${enumName}>;`;
+      return `${documentation}${exportKwd}type ${enumName} = ${enumType};\n\n${exportKwd}const ${enumObjectName} = {\n${enumValues}\n} satisfies Record<string, ${enumName}>;`;
     }
     default:
       throw new Error(`Unknown enumType: ${config.enumType}`);
@@ -120,11 +126,19 @@ function getModelTs(
   usedCustomTypes: Set<keyof typeof CUSTOM_TYPES>,
 ): string {
   const fields = modelData.fields
-    .map(({ name, kind, type, isRequired, isList }) => {
-      const getDefinition = (resolvedType: string, optional = false) =>
-        "  " +
-        `${name}${optional || (!isRequired && config.optionalNullables) ? "?" : ""}: ` +
-        `${resolvedType}${isList ? "[]" : ""}${!isRequired ? " | null" : ""};`;
+    .map(({ name, kind, type, isRequired, isList, documentation }) => {
+      const getDefinition = (resolvedType: string, optional = false) => {
+        const fieldComment =
+          config.includeComments && documentation
+            ? `  /**\n   * ${documentation.replace(/\n/g, "\n   * ")}\n   */\n`
+            : "";
+        return (
+          fieldComment +
+          "  " +
+          `${name}${optional || (!isRequired && config.optionalNullables) ? "?" : ""}: ` +
+          `${resolvedType}${isList ? "[]" : ""}${!isRequired ? " | null" : ""};`
+        );
+      };
 
       switch (kind) {
         case "scalar": {
@@ -166,12 +180,16 @@ function getModelTs(
     .join("\n");
 
   const name = modelNameMap.get(modelData.name) ?? typeNameMap.get(modelData.name);
+  const documentation =
+    config.includeComments && modelData.documentation
+      ? `/**\n * ${modelData.documentation.replace(/\n/g, "\n * ")}\n */\n`
+      : "";
 
   switch (config.modelType) {
     case "interface":
-      return `export interface ${name} {\n${fields}\n}`;
+      return `${documentation}export interface ${name} {\n${fields}\n}`;
     case "type":
-      return `export type ${name} = {\n${fields}\n};`;
+      return `${documentation}export type ${name} = {\n${fields}\n};`;
     default:
       throw new Error(`Unknown modelType: ${config.modelType}`);
   }
@@ -210,6 +228,7 @@ generatorHandler({
       optionalNullables: baseConfig.optionalNullables === "true", // Default false
       prettier: baseConfig.prettier === "true", // Default false
       resolvePrettierConfig: baseConfig.resolvePrettierConfig !== "false", // Default true
+      includeComments: baseConfig.includeComments === "true", // Default false
     };
 
     validateConfig(config);
