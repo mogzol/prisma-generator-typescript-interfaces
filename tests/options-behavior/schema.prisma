@@ -50,15 +50,35 @@ generator formatPrettier {
 }
 
 generator requiredRelations {
-  provider          = "tsx src/generator.ts"
-  output            = "requiredRelations.ts"
-  optionalRelations = false
+  provider  = "tsx src/generator.ts"
+  output    = "requiredRelations.ts"
+  relations = "required"
 }
 
 generator omitRelations {
-  provider      = "tsx src/generator.ts"
-  output        = "omitRelations.ts"
-  omitRelations = true
+  provider  = "tsx src/generator.ts"
+  output    = "omitRelations.ts"
+  relations = "none"
+}
+
+generator requiredCounts {
+  provider = "tsx src/generator.ts"
+  output   = "requiredCounts.ts"
+  counts   = "required"
+}
+
+generator optionalCounts {
+  provider = "tsx src/generator.ts"
+  output   = "optionalCounts.ts"
+  counts   = "optional"
+}
+
+// Without relations, counts should not be included
+generator countsNoRelations {
+  provider  = "tsx src/generator.ts"
+  output    = "countsNoRelations.ts"
+  relations = "none"
+  counts    = "optional"
 }
 
 generator optionalNullables {
@@ -72,7 +92,7 @@ generator optionalNullablesRequiredRelations {
   provider          = "tsx src/generator.ts"
   output            = "optionalNullablesRequiredRelations.ts"
   optionalNullables = true
-  optionalRelations = false
+  relations         = "required"
 }
 
 generator prefixSuffix {

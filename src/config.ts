@@ -1,155 +1,123 @@
-import type { GeneratorConfig, GeneratorOptions } from "@prisma/generator-helper";
+import type { GeneratorOptions } from "@prisma/generator-helper";
 import { stat } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
-export interface Config {
-  schemaDir: string;
-  outputDir: string;
-  outputFile: string;
+const CONFIG_SCHEMA = {
+  schemaDir: "nonEmptyString",
+  outputDir: "nonEmptyString",
+  outputFile: "nonEmptyString",
 
-  enumPrefix: string;
-  enumSuffix: string;
-  enumObjectPrefix: string;
-  enumObjectSuffix: string;
-  modelPrefix: string;
-  modelSuffix: string;
-  typePrefix: string;
-  typeSuffix: string;
-  headerComment: string;
-  modelType: "interface" | "type";
-  enumType: "stringUnion" | "enum" | "object";
+  enumPrefix: "string",
+  enumSuffix: "string",
+  enumObjectPrefix: "string",
+  enumObjectSuffix: "string",
+  modelPrefix: "string",
+  modelSuffix: "string",
+  typePrefix: "string",
+  typeSuffix: "string",
+  headerComment: "string",
 
-  stringType: string;
-  booleanType: string;
-  intType: string;
-  floatType: string;
-  jsonType: string;
-  dateType: string;
-  bigIntType: string;
-  decimalType: string;
-  bytesType: string;
+  // Enums are specified as an array of their possible values
+  modelType: ["interface", "type"],
+  enumType: ["stringUnion", "enum", "object"],
+  relations: ["required", "optional", "none"],
+  counts: ["required", "optional", "none"],
 
-  typeImportPath?: string;
+  stringType: "nonEmptyString",
+  booleanType: "nonEmptyString",
+  intType: "nonEmptyString",
+  floatType: "nonEmptyString",
+  jsonType: "nonEmptyString",
+  dateType: "nonEmptyString",
+  bigIntType: "nonEmptyString",
+  decimalType: "nonEmptyString",
+  bytesType: "nonEmptyString",
 
-  perFieldTypes: boolean;
-  exportEnums: boolean;
-  optionalRelations: boolean;
-  omitRelations: boolean;
-  optionalNullables: boolean;
-  prettier: boolean;
-  prettierConfigPath: string | null;
-}
+  typeImportPath: "optionalString",
 
-const STRING_CONFIGS: Array<keyof Config> = [
-  "enumPrefix",
-  "enumSuffix",
-  "enumObjectPrefix",
-  "enumObjectSuffix",
-  "modelPrefix",
-  "modelSuffix",
-  "typePrefix",
-  "typeSuffix",
-  "headerComment",
-];
+  perFieldTypes: "boolean",
+  exportEnums: "boolean",
+  optionalNullables: "boolean",
+  prettier: "boolean",
+  prettierConfigPath: "nullableString",
+} as const;
 
-const NONEMPTY_STRING_CONFIGS: Array<keyof Config> = [
-  "schemaDir",
-  "outputDir",
-  "outputFile",
-  "stringType",
-  "booleanType",
-  "intType",
-  "floatType",
-  "jsonType",
-  "dateType",
-  "bigIntType",
-  "decimalType",
-  "bytesType",
-];
+type Writable<T> = { -readonly [P in keyof T]: T[P] };
+type ConfigSchema = typeof CONFIG_SCHEMA;
+export type Config = {
+  [K in keyof ConfigSchema]: ConfigSchema[K] extends readonly string[]
+    ? ConfigSchema[K][number]
+    : ConfigSchema[K] extends "string" | "nonEmptyString"
+      ? string
+      : ConfigSchema[K] extends "optionalString"
+        ? string | undefined
+        : ConfigSchema[K] extends "nullableString"
+          ? string | null
+          : ConfigSchema[K] extends "boolean"
+            ? boolean
+            : never;
+};
 
-const BOOLEAN_CONFIGS: Array<keyof Config> = [
-  "perFieldTypes",
-  "exportEnums",
-  "optionalRelations",
-  "omitRelations",
-  "optionalNullables",
-  "prettier",
-];
+async function validateConfig(
+  rawConfig: Record<string, string | string[] | undefined>,
+): Promise<{ config: Config; errors: string[] }> {
+  const errors: string[] = [];
+  const validatedConfig: Record<string, unknown> = {};
 
-class ConfigValidator {
-  public errors: string[] = [];
-
-  constructor(private generatorConfig: GeneratorConfig["config"]) {}
-
-  public async validate(config: Config): Promise<Config> {
-    const { modelType, enumType, typeImportPath, prettierConfigPath, ...restConfig } = config;
-
-    if (!["interface", "type"].includes(modelType)) {
-      this.errors.push(`Invalid modelType: ${JSON.stringify(modelType)}`);
+  // Ensure config doesn't contain any unknown values
+  for (const key of Object.keys(rawConfig).sort()) {
+    if (!(key in CONFIG_SCHEMA)) {
+      errors.push(`Unknown config property: "${key}"`);
     }
-    if (!["stringUnion", "enum", "object"].includes(enumType)) {
-      this.errors.push(`Invalid enumType: ${JSON.stringify(enumType)}`);
-    }
-    if (typeImportPath !== undefined && (typeof typeImportPath !== "string" || !typeImportPath)) {
-      this.errors.push(`Invalid typeImportPath: ${JSON.stringify(typeImportPath)}`);
-    }
-    if (config.prettier) {
-      if (typeof prettierConfigPath !== "string") {
-        this.errors.push(`Invalid prettierConfigPath: ${JSON.stringify(prettierConfigPath)}`);
-      } else if (prettierConfigPath === "null") {
-        // Convert string "null" to real null
-        config.prettierConfigPath = null;
-      } else if (prettierConfigPath !== "") {
-        const fullPath = resolve(config.schemaDir, prettierConfigPath);
-        const prettierConfigStat = await stat(fullPath).catch(() => null);
-        if (!prettierConfigStat?.isFile()) {
-          this.errors.push(`prettierConfigPath does not exist: "${fullPath}"`);
-        } else {
-          config.prettierConfigPath = fullPath;
-        }
-      }
-    }
-
-    for (const [name, value] of Object.entries(restConfig)) {
-      let known = false;
-      let valid = false;
-      if (STRING_CONFIGS.includes(name as keyof Config)) {
-        known = true;
-        valid = typeof value === "string";
-      } else if (NONEMPTY_STRING_CONFIGS.includes(name as keyof Config)) {
-        known = true;
-        valid = typeof value === "string" && Boolean(value.trim());
-      } else if (BOOLEAN_CONFIGS.includes(name as keyof Config)) {
-        known = true;
-        valid = typeof value === "boolean";
-      }
-
-      if (!known) {
-        this.errors.push(`Unknown config property: "${name}"`);
-      } else if (!valid) {
-        this.errors.push(`Invalid ${name}: ${JSON.stringify(value)}`);
-      }
-    }
-
-    return config;
   }
 
-  public boolean(name: keyof Config, defaultValue: boolean) {
-    const value = this.generatorConfig[name];
-    if (value === undefined) {
-      return defaultValue;
-    } else if (typeof value === "string") {
-      const valueLower = value.toLowerCase();
-      if (valueLower === "true") {
-        return true;
-      } else if (valueLower === "false") {
-        return false;
-      }
+  // Validate config using the schema, and convert values to the proper types
+  for (const [name, schema] of Object.entries(CONFIG_SCHEMA)) {
+    const value = rawConfig[name];
+    let valid = false;
+    let finalValue: unknown = value;
+    if (Array.isArray(schema)) {
+      valid = schema.includes(value);
+    } else if (schema === "string") {
+      valid = typeof value === "string";
+    } else if (schema === "nonEmptyString") {
+      valid = typeof value === "string" && Boolean(value.trim());
+    } else if (schema === "optionalString") {
+      valid = typeof value === "string" || value === undefined;
+    } else if (schema === "nullableString") {
+      valid = typeof value === "string";
+      finalValue = value === "null" ? null : value;
+    } else if (schema === "boolean") {
+      const lowerValue = typeof value === "string" ? value.toLowerCase() : null;
+      valid = lowerValue === "true" || lowerValue === "false";
+      finalValue = lowerValue === "true" ? true : false;
     }
 
-    this.errors.push(`Invalid ${name}: ${JSON.stringify(value)}`);
-    return defaultValue;
+    if (valid) {
+      validatedConfig[name] = finalValue;
+    } else {
+      errors.push(
+        Array.isArray(schema)
+          ? `Invalid ${name}: ${JSON.stringify(value)} - expected one of: ${schema.map((v) => `"${v}"`).join(", ")}`
+          : `Invalid ${name}: ${JSON.stringify(value)}`,
+      );
+    }
   }
+
+  const config = validatedConfig as unknown as Writable<Config>;
+
+  // Validate that prettierConfigPath exists and convert it to an absolute path
+  if (config.prettier && config.prettierConfigPath) {
+    const fullPath = resolve(config.schemaDir, config.prettierConfigPath);
+    const prettierConfigStat = await stat(fullPath).catch(() => null);
+    if (!prettierConfigStat?.isFile()) {
+      errors.push(`prettierConfigPath does not exist: "${fullPath}"`);
+    } else {
+      config.prettierConfigPath = fullPath;
+    }
+  }
+
+  return { config, errors };
 }
 
 export async function getConfig(options: GeneratorOptions): Promise<Config> {
@@ -166,8 +134,7 @@ export async function getConfig(options: GeneratorOptions): Promise<Config> {
 
   const generatorConfig = options.generator.config;
 
-  const validator = new ConfigValidator(generatorConfig);
-  const config = await validator.validate({
+  const { config, errors } = await validateConfig({
     // Defaults
     enumPrefix: "",
     enumSuffix: "",
@@ -180,6 +147,8 @@ export async function getConfig(options: GeneratorOptions): Promise<Config> {
     headerComment: "This file was auto-generated by prisma-generator-typescript-interfaces",
     modelType: "interface",
     enumType: "stringUnion",
+    relations: "optional",
+    counts: "none",
     prettierConfigPath: "",
 
     // Default types
@@ -193,16 +162,14 @@ export async function getConfig(options: GeneratorOptions): Promise<Config> {
     decimalType: "Decimal",
     bytesType: "Uint8Array",
 
+    // Booleans (which are strings before validation)
+    perFieldTypes: "true",
+    exportEnums: "true",
+    optionalNullables: "false",
+    prettier: "false",
+
     // User config
     ...generatorConfig,
-
-    // Booleans come after since in generatorConfig they are strings
-    perFieldTypes: validator.boolean("perFieldTypes", true),
-    exportEnums: validator.boolean("exportEnums", true),
-    optionalRelations: validator.boolean("optionalRelations", true),
-    omitRelations: validator.boolean("omitRelations", false),
-    optionalNullables: validator.boolean("optionalNullables", false),
-    prettier: validator.boolean("prettier", false),
 
     // schemaDir, outputDir, and outputFile cannot be overridden
     schemaDir,
@@ -210,8 +177,8 @@ export async function getConfig(options: GeneratorOptions): Promise<Config> {
     outputFile,
   });
 
-  if (validator.errors.length) {
-    throw new Error("Invalid config:\n - " + validator.errors.sort().join("\n - "));
+  if (errors.length) {
+    throw new Error("Invalid config:\n - " + errors.join("\n - "));
   }
 
   return config;

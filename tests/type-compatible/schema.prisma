@@ -9,6 +9,9 @@ generator client {
 
 generator typescriptInterfaces {
   provider = "tsx src/generator.ts"
+
+  // Include optional counts, which should still maintain type compatibility
+  counts = "optional"
 }
 
 // ========================

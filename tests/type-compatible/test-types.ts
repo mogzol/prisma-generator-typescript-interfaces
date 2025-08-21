@@ -18,6 +18,11 @@ const queryResult = await client.data.findUnique({ where: { id: 1 }, include: {
   relationField: true,
   optionalRelationField: true,
   relationArrayField: true,
+  _count: {
+    select: {
+      relationArrayField: true
+    }
+  }
 }});
 
 const castedResult: Interfaces.Data = queryResult!;

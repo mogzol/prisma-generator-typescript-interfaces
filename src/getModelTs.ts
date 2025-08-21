@@ -17,7 +17,8 @@ export function getModelTs(
   typeNameMap: Map<string, string>,
   customTypes: CustomTypes,
 ): string {
-  const fields = modelData.fields
+  const countNames: string[] = [];
+  let fields = modelData.fields
     .map(({ name, kind, type, isRequired, isList }) => {
       const getDefinition = (resolvedType: string, optional = false) =>
         "  " +
@@ -52,7 +53,14 @@ export function getModelTs(
           if (typeName) {
             return getDefinition(typeName); // Type relations are never optional or omitted
           } else if (modelName) {
-            return config.omitRelations ? null : getDefinition(modelName, config.optionalRelations);
+            if (config.relations === "none") {
+              return null;
+            } else {
+              if (isList) {
+                countNames.push(name);
+              }
+              return getDefinition(modelName, config.relations === "optional");
+            }
           } else {
             throw new Error(`Unknown model name: ${type}`);
           }
@@ -72,6 +80,12 @@ export function getModelTs(
     })
     .filter((f) => f !== null)
     .join("\n");
+
+  if (config.counts !== "none" && countNames.length) {
+    const sep = config.counts === "optional" ? "?:" : ":";
+    const countFields = countNames.map((n) => `    ${n}${sep} number;`).join("\n");
+    fields += `\n  _count${sep} {\n${countFields}\n  };`;
+  }
 
   const name = modelNameMap.get(modelData.name) ?? typeNameMap.get(modelData.name);
 

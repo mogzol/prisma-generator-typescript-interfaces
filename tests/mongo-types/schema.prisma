@@ -17,11 +17,18 @@ generator mongoModelType {
   modelType = "type"
 }
 
-// Ensure omitRelations does not apply to `type` definitions (since they always exist on the object)
+// Ensure relations = "none" does not apply to `type` definitions
 generator mongoOmitRelations {
-  provider      = "tsx src/generator.ts"
-  output        = "mongoOmitRelations.ts"
-  omitRelations = true
+  provider  = "tsx src/generator.ts"
+  output    = "mongoOmitRelations.ts"
+  relations = "none"
+}
+
+// Ensure count does include `type` definitions
+generator mongoCountRelations {
+  provider = "tsx src/generator.ts"
+  output   = "mongoCountRelations.ts"
+  counts   = "optional"
 }
 
 generator prefixSuffix {

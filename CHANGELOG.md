@@ -1,8 +1,10 @@
 # 3.0.0
 
 - **This release is still in development!**
+- Add the `counts` option to include the `_count` field on models with relations. It can be set to either `required`, `optional`, or `none`.
 - Allow full control over the types used during generation, including allowing per-field types. See [Custom Types](CUSTOM_TYPES.md) for details.
   - **POTENTIALLY BREAKING**: Per-field types are enabled by default. If your Prisma schema contains compatible field type annotations, they will be used and the output will be different from previous releases. If you don't want this behavior, set the `perFieldTypes` config option to `false`.
+- **BREAKING CHANGE**: Replace the `omitRelations` and `optionalRelations` options with `relations`, which can be set to either `required`, `optional`, or `none`.
 - **BREAKING CHANGE**: Remove `BufferObject` and `ArrayObject` built-in types from `bytesType`. Their behavior can be replicated using custom types:
   <!-- prettier-ignore -->
   ```prisma
