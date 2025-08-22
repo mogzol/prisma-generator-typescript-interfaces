@@ -157,7 +157,15 @@ export interface MyData {
 }
 ```
 
-Note that these type annotations must be at the start of a field's documentation, and must use three slashes `///`, not two like a regular comment. Regular annotations must be wrapped in square brackets (`[` `]`), and literal type annotations must be wrapped in square brackets with an exclamation point (`![` `]`).
+These type annotation comments must be documentation comments (with a triple-slash, like `///`) and not normal comments (`//`). You cannot put any text on the same line before the opening bracket, but you can include text after the closing bracket. You can include additional documentation above the type comment, but not below, the type annotation comment must be the final line of the documentation.
+
+> [!Note]
+> If the `includeComments` option is enabled, the custom type documentation line will not be included in the generated comment.
+
+There are two types of type annotations:
+
+- Regular type annotations, which are wrapped in square brackets (`[` `]`)
+- Literal type annotations, which are wrapped in square brackets with an exclamation point at the start (`![` `]`).
 
 Regular type annotations, like with `myJson` in the example, are treated as imported types and require the `typeImportPath` option to be set. See [imported types](#imported-types) for more information.
 
