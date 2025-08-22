@@ -5,7 +5,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "always"
   },
-  "cSpell.words": ["autoincrement", "datamodel", "datasource", "dmmf"],
+  "cSpell.words": ["autoincrement", "datamodel", "datasource", "dmmf", "prereleased"],
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },

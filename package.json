@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mogzol/prisma-generator-typescript-interfaces"
+    "url": "git+https://github.com/mogzol/prisma-generator-typescript-interfaces.git"
   },
   "type": "module",
   "main": "dist/generator.js",
