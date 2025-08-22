@@ -19,12 +19,12 @@
   }
   ```
 - The `resolvePrettierConfig` option has been replaced with `prettierConfigPath`, which allows you to specify a specific Prettier config file. If this option is empty (the default), then the behavior will be the same as before, where the Prettier config file will be resolved relative to the output location. Set the option to `null` to disable using Prettier config files altogether.
+- The new [per-field types feature](CUSTOM_TYPES.md#per-field-types) is enabled by default. If your Prisma schema contains compatible type annotations in your field documentation, they will be used and the output will be different from previous releases. If you don't want this behavior, set the `perFieldTypes` config option to `false`.
 
 ### New Features:
 
 - Allow full control over the types used during generation, including allowing per-field types. See [Custom Types](CUSTOM_TYPES.md) for details.
-  - **POTENTIALLY BREAKING**: Per-field types are enabled by default. If your Prisma schema contains compatible field type annotations, they will be used and the output will be different from previous releases. If you don't want this behavior, set the `perFieldTypes` config option to `false`.
-  - Thanks [@helmturner](https://github.com/helmturner) for the initial per-field custom type work
+  - Thanks [@helmturner](https://github.com/helmturner) for the initial per-field types work
 - Add the `includeComments` option to include documentation from the schema in the generated output (thanks [@samelie](@samelie))
 - Add the `counts` option to include the `_count` field on models with relations. It can be set to either `required`, `optional`, or `none`.
 - Improve config validation and generator error messages. The generator name is now included in all errors since Prisma doesn't make it clear which generator an error is coming from.
