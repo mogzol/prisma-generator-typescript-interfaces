@@ -4,11 +4,11 @@ export type UserStatus = "ACTIVE" | "INACTIVE" | "SUSPENDED";
 
 export interface User {
   id: string;
-  email: string;
+  email: EmailType;
   name: string | null;
   status: UserStatus;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: MyDate;
+  updatedAt: MyDate;
   posts?: Post[];
   profile?: Profile | null;
 }
@@ -16,7 +16,7 @@ export interface User {
 export interface Profile {
   id: string;
   bio: string | null;
-  avatar: string | null;
+  avatar: { url: string; width: number; height: number; } | null;
   user?: User;
   userId: string;
 }
@@ -30,6 +30,7 @@ export interface Post {
   updatedAt: Date;
   author?: User;
   authorId: string;
+  meta: JsonValue;
 }
 
 export interface Address {
@@ -39,3 +40,9 @@ export interface Address {
   zipCode: string;
   country: string;
 }
+
+type EmailType = { address: string; domain: string };
+
+type MyDate = { time: number };
+
+type JsonValue = string | number | boolean | { [key in string]?: JsonValue } | Array<JsonValue> | null;

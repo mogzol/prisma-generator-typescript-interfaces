@@ -16,25 +16,30 @@ export interface User {
   id: string;
   /**
    * The user's email address
-   * Must be unique across all users
+   * Comments can be multiple lines
+   * And can include a custom type definition:
    */
-  email: string;
+  email: EmailType;
   /**
    * The user's display name
+   * [NotCustomType]
+   * Custom types that are not at the bottom of a comment are just treated as part of the comment
    */
   name: string | null;
   /**
    * User account status
+   * Comment indention will not be preserved (Prisma limitation)
+   *
+   * Comments can have empty lines
+   *
+   * @example And include JSDoc tags or other special characters: <>!@#$%^&*()`"'///_-; see :)
    */
   status: UserStatus;
   /**
    * When the user account was created
    */
-  createdAt: Date;
-  /**
-   * When the user account was last updated
-   */
-  updatedAt: Date;
+  createdAt: MyDate;
+  updatedAt: MyDate;
   /**
    * Posts created by this user
    */
@@ -53,14 +58,11 @@ export interface Profile {
    * The unique identifier for the profile
    */
   id: string;
-  /**
-   * A short bio about the user
-   */
   bio: string | null;
   /**
    * URL to the user's avatar image
    */
-  avatar: string | null;
+  avatar: { url: string; width: number; height: number; } | null;
   /**
    * The user this profile belongs to
    */
@@ -109,6 +111,10 @@ export interface Post {
    * Reference to the author
    */
   authorId: string;
+  /**
+   * Post metadata
+   */
+  meta: JsonValue;
 }
 
 /**
@@ -137,3 +143,9 @@ export interface Address {
    */
   country: string;
 }
+
+type EmailType = { address: string; domain: string };
+
+type MyDate = { time: number };
+
+type JsonValue = string | number | boolean | { [key in string]?: JsonValue } | Array<JsonValue> | null;

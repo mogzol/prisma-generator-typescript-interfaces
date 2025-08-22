@@ -33,7 +33,7 @@ export function documentationBlock(documentation: string | undefined, indent = 0
   }
   const indentation = " ".repeat(indent);
   return (
-    ["/**", ...documentation.split("\n").map((line) => ` * ${line}`), " */"]
+    ["/**", ...documentation.split("\n").map((line) => " " + `* ${line}`.trim()), " */"]
       .map((line) => `${indentation}${line}`)
       .join("\n") + "\n"
   );

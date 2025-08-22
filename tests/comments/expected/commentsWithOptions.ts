@@ -20,24 +20,29 @@ export type User = {
   id: string;
   /**
    * The user's email address
-   * Must be unique across all users
+   * Comments can be multiple lines
+   * And can include a custom type definition:
    */
   email: string;
   /**
    * The user's display name
+   * [NotCustomType]
+   * Custom types that are not at the bottom of a comment are just treated as part of the comment
    */
   name: string | null;
   /**
    * User account status
+   * Comment indention will not be preserved (Prisma limitation)
+   *
+   * Comments can have empty lines
+   *
+   * @example And include JSDoc tags or other special characters: <>!@#$%^&*()`"'///_-; see :)
    */
   status: UserStatus;
   /**
    * When the user account was created
    */
   createdAt: Date;
-  /**
-   * When the user account was last updated
-   */
   updatedAt: Date;
   /**
    * Posts created by this user
@@ -57,9 +62,6 @@ export type Profile = {
    * The unique identifier for the profile
    */
   id: string;
-  /**
-   * A short bio about the user
-   */
   bio: string | null;
   /**
    * URL to the user's avatar image
@@ -113,6 +115,10 @@ export type Post = {
    * Reference to the author
    */
   authorId: string;
+  /**
+   * Post metadata
+   */
+  meta: JsonValue;
 };
 
 /**
@@ -141,3 +147,11 @@ export type Address = {
    */
   country: string;
 };
+
+type JsonValue =
+  | string
+  | number
+  | boolean
+  | { [key in string]?: JsonValue }
+  | Array<JsonValue>
+  | null;

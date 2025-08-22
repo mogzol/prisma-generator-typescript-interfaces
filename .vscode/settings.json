@@ -8,5 +8,13 @@
   "cSpell.words": ["autoincrement", "datamodel", "datasource", "dmmf"],
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
-  }
+  },
+  "eslint.rules.customizations": [
+    {
+      // These rules often hide underlying TypeScript errors in the editor, so downgrade them to
+      // warning so they show as a different color and you can see the TypeScript error.
+      "rule": "@typescript-eslint/no-unsafe-(argument|assignment|call|return)",
+      "severity": "warn"
+    }
+  ]
 }
