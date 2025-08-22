@@ -1,5 +1,6 @@
 import type { DMMF } from "@prisma/generator-helper";
 import { Config } from "./config.js";
+import { localeSort, parseFieldDocumentation } from "./utils.js";
 
 // Define some common custom types as built-in so that users don't need to manually define them.
 const BUILTIN_CUSTOM_TYPES = {
@@ -10,10 +11,7 @@ const BUILTIN_CUSTOM_TYPES = {
 
 const importTypeRegex = /^import:([\w$]+)$/;
 const definedTypeRegex = /^(?!import:)([\w$]+):(.+)$/;
-const perFieldTypeRegex = /^\s*(!?)\[\s*([^\s].*)\]/;
 const typeNameRegex = /^[\w$]+$/;
-
-const localeSort = (a: string, b: string) => a.localeCompare(b);
 
 interface CustomType {
   type: string;
@@ -72,11 +70,9 @@ export class CustomTypes {
     for (const model of [...datamodel.models, ...datamodel.types]) {
       for (const { name, documentation } of model.fields) {
         // Check field documentation for a custom type
-        const match = perFieldTypeRegex.exec(documentation ?? "");
-        if (match?.[2]) {
-          const literal = Boolean(match[1]);
-          const typeString = match[2].trim();
-
+        const fieldDoc = parseFieldDocumentation(documentation);
+        if (fieldDoc?.customTypeDefinition) {
+          const { literal, typeString } = fieldDoc.customTypeDefinition;
           let customType: CustomType;
           try {
             customType = this.getCustomType(typeString, !literal);

@@ -1,6 +1,7 @@
 import { DMMF } from "@prisma/generator-helper";
 import { Config } from "./config.js";
 import { CustomTypes } from "./customTypes.js";
+import { documentationBlock, parseFieldDocumentation } from "./utils.js";
 
 // A type is considered complex if contains a union (|), intersection (&), conditional (?), or
 // function (=>) anywhere in the type. This will catch cases that don't necessarily need to be
@@ -19,11 +20,19 @@ export function getModelTs(
 ): string {
   const countNames: string[] = [];
   let fields = modelData.fields
-    .map(({ name, kind, type, isRequired, isList }) => {
-      const getDefinition = (resolvedType: string, optional = false) =>
-        "  " +
-        `${name}${optional || (!isRequired && config.optionalNullables) ? "?" : ""}: ` +
-        `${wrapComplex(resolvedType)}${isList ? "[]" : ""}${!isRequired ? " | null" : ""};`;
+    .map(({ name, kind, type, isRequired, isList, documentation }) => {
+      const getDefinition = (resolvedType: string, optional = false) => {
+        const fieldDoc = parseFieldDocumentation(documentation);
+        const fieldComment = config.includeComments
+          ? documentationBlock(fieldDoc?.documentation, 2)
+          : "";
+        return (
+          fieldComment +
+          "  " +
+          `${name}${optional || (!isRequired && config.optionalNullables) ? "?" : ""}: ` +
+          `${wrapComplex(resolvedType)}${isList ? "[]" : ""}${!isRequired ? " | null" : ""};`
+        );
+      };
 
       // When creating definitions for lists or nullable fields, complex types need to be wrapped
       // in parenthesis so that they end up like `(string | number)[]` or `(() => string) | null`
@@ -88,12 +97,13 @@ export function getModelTs(
   }
 
   const name = modelNameMap.get(modelData.name) ?? typeNameMap.get(modelData.name);
+  const documentation = config.includeComments ? documentationBlock(modelData.documentation) : "";
 
   switch (config.modelType) {
     case "interface":
-      return `export interface ${name} {\n${fields}\n}`;
+      return `${documentation}export interface ${name} {\n${fields}\n}`;
     case "type":
-      return `export type ${name} = {\n${fields}\n};`;
+      return `${documentation}export type ${name} = {\n${fields}\n};`;
     default:
       throw new Error(`Unknown modelType: ${config.modelType}`);
   }

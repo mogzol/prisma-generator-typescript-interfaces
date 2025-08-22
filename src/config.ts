@@ -38,6 +38,7 @@ const CONFIG_SCHEMA = {
   perFieldTypes: "boolean",
   exportEnums: "boolean",
   optionalNullables: "boolean",
+  includeComments: "boolean",
   prettier: "boolean",
   prettierConfigPath: "nullableString",
 } as const;
@@ -167,6 +168,7 @@ export async function getConfig(options: GeneratorOptions): Promise<Config> {
     exportEnums: "true",
     optionalNullables: "false",
     prettier: "false",
+    includeComments: "false",
 
     // User config
     ...generatorConfig,
