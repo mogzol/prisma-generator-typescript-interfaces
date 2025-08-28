@@ -1,0 +1,139 @@
+// Test TypeScript comments generation from triple-slash comments
+
+// ========================
+// Generator Tests
+// ========================
+
+generator comments {
+  provider        = "tsx src/generator.ts"
+  output          = "comments.ts"
+  includeComments = true
+}
+
+generator commentsPrettier {
+  provider        = "tsx src/generator.ts"
+  output          = "commentsPrettier.ts"
+  includeComments = true
+  prettier        = true
+}
+
+generator commentsWithOptions {
+  provider        = "tsx src/generator.ts"
+  output          = "commentsWithOptions.ts"
+  includeComments = true
+  modelType       = "type"
+  enumType        = "enum"
+  perFieldTypes   = false
+  prettier        = true
+}
+
+generator noComments {
+  provider        = "tsx src/generator.ts"
+  output          = "noComments.ts"
+  includeComments = false
+}
+
+// ========================
+// Prisma Schema
+// ========================
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+/// The status of a user account
+enum UserStatus {
+  /// User is active and can log in
+  ACTIVE
+  /// User is inactive and cannot log in
+  INACTIVE
+  /// User account is suspended
+  SUSPENDED
+}
+
+/// Represents a user in the system
+/// This model contains all user-related information
+model User {
+  /// The unique identifier for the user
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  /// The user's email address
+  /// Comments can be multiple lines
+  /// And can include a custom type definition:
+  /// [EmailType:{ address: string; domain: string }]
+  email     String     @unique
+  /// The user's display name
+  /// [NotCustomType]
+  /// Custom types that are not at the bottom of a comment are just treated as part of the comment
+  name      String?
+  /// User account status
+  ///      Comment indention will not be preserved (Prisma limitation)
+  ///
+  /// Comments can have empty lines
+  ///
+  /// @example And include JSDoc tags or other special characters: <>!@#$%^&*()`"'///_-; see :)
+  status    UserStatus @default(ACTIVE)
+  /// When the user account was created
+  /// [MyDate:{ time: number }] - Comments in the same line as custom types are ignored.
+  createdAt DateTime   @default(now())
+  /// [MyDate] - If there is only custom type it is treated as no comment
+  updatedAt DateTime   @updatedAt
+  /// Posts created by this user
+  posts     Post[]     @relation("UserPosts")
+  /// User's profile information
+  profile   Profile?
+}
+
+/// Extended profile information for a user
+model Profile {
+  /// The unique identifier for the profile
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  // A comment with two slashes is not treated as documentation
+  bio    String?
+  /// URL to the user's avatar image
+  /// ![{ url: string; width: number; height: number; }] - Also uses a custom type (this one is a literal, it will be generated inline).
+  avatar String?
+  /// The user this profile belongs to
+  user   User    @relation(fields: [userId], references: [id])
+  /// Reference to the user
+  userId String  @unique @db.ObjectId
+}
+
+/// A blog post written by a user
+model Post {
+  /// The unique identifier for the post
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  /// The title of the post
+  /// Should be descriptive and engaging
+  title     String
+  /// The main content of the post
+  /// Can contain markdown formatting
+  content   String
+  /// Whether the post is published and visible to readers
+  published Boolean  @default(false)
+  /// When the post was created
+  createdAt DateTime @default(now())
+  /// When the post was last updated
+  updatedAt DateTime @updatedAt
+  /// The author of this post
+  author    User     @relation("UserPosts", fields: [authorId], references: [id])
+  /// Reference to the author
+  authorId  String   @db.ObjectId
+  /// Post metadata
+  meta      Json
+}
+
+/// Represents an address
+/// Used for MongoDB composite types
+type Address {
+  /// Street name and number
+  street  String
+  /// City name
+  city    String
+  /// State or province
+  state   String
+  /// Postal or ZIP code
+  zipCode String
+  /// Country name
+  country String
+}

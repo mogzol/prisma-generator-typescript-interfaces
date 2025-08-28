@@ -1,7 +1,15 @@
 Error:
-Invalid modelType: bad
-Invalid enumType: incorrect
-Invalid dateType: wrong
-Invalid bigIntType: values
-Invalid decimalType: go
-Invalid bytesType: here
+prisma-generator-typescript-interfaces error: Invalid config:
+ - Unknown config property: "badOption"
+ - Unknown config property: "wrongOption"
+ - Invalid modelType: "bad" - expected one of: "interface", "type"
+ - Invalid enumType: "incorrect" - expected one of: "stringUnion", "enum", "object"
+ - Invalid relations: "something" - expected one of: "required", "optional", "none"
+ - Invalid counts: "no" - expected one of: "required", "optional", "none"
+ - Invalid stringType: []
+ - Invalid booleanType: ""
+ - Invalid intType: ["wrong"]
+ - Invalid typeImportPath: [["nested"],"type"]
+ - Invalid exportEnums: "this"
+ - Invalid optionalNullables: "a"
+ - prettierConfigPath does not exist: "/invalid/path!"

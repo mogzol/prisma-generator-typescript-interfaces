@@ -11,10 +11,6 @@ export interface Person {
   email: string | null;
   gender: Gender;
   addressId: number;
-  address?: Address;
-  friends?: Person[];
-  friendsOf?: Person[];
-  data?: Data | null;
 }
 
 export interface Address {
@@ -23,7 +19,6 @@ export interface Address {
   streetName: string;
   city: string;
   isBilling: boolean;
-  people?: Person[];
 }
 
 export interface Data {
@@ -36,7 +31,7 @@ export interface Data {
   decimalField: Decimal;
   dateField: Date;
   jsonField: JsonValue;
-  bytesField: ArrayObject;
+  bytesField: Uint8Array;
   enumField: DataTest;
   optionalStringField: string | null;
   optionalBooleanField: boolean | null;
@@ -46,7 +41,7 @@ export interface Data {
   optionalDecimalField: Decimal | null;
   optionalDateField: Date | null;
   optionalJsonField: JsonValue | null;
-  optionalBytesField: ArrayObject | null;
+  optionalBytesField: Uint8Array | null;
   optionalEnumField: DataTest | null;
   stringArrayField: string[];
   booleanArrayField: boolean[];
@@ -56,14 +51,11 @@ export interface Data {
   decimalArrayField: Decimal[];
   dateArrayField: Date[];
   jsonArrayField: JsonValue[];
-  bytesArrayField: ArrayObject[];
+  bytesArrayField: Uint8Array[];
   enumArrayField: DataTest[];
   personId: number;
-  person?: Person;
 }
 
 type Decimal = { valueOf(): string };
 
 type JsonValue = string | number | boolean | { [key in string]?: JsonValue } | Array<JsonValue> | null;
-
-type ArrayObject = { [index: number]: number } & { length?: never };

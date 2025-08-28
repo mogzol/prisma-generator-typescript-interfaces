@@ -77,7 +77,7 @@ if (keepOutput) {
 
 const tests = (await readDir("tests"))
   .filter((d) => d.isDirectory() && (!testFilters.length || testFilters.includes(d.name)))
-  .map((d) => path.join(d.path, d.name));
+  .map((d) => path.join(d.parentPath, d.name));
 
 if (!tests.length) {
   console.error("No tests found!");

@@ -38,12 +38,18 @@ export interface Data {
   bytesArrayField: Uint8Array[];
   enumArrayField: Fruits[];
   relationArrayField?: RelationC[];
+  _count?: {
+    relationArrayField?: number;
+  };
 }
 
 export interface RelationA {
   id: number;
   fieldA: string;
   data?: Data[];
+  _count?: {
+    data?: number;
+  };
 }
 
 export interface RelationB {

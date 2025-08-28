@@ -5,16 +5,30 @@
 // ========================
 
 generator withConfig {
-  provider = "tsx generator.ts"
+  provider = "tsx src/generator.ts"
   output   = "withConfig.ts"
   prettier = true
 }
 
 generator withoutConfig {
-  provider              = "tsx generator.ts"
-  output                = "withoutConfig.ts"
-  prettier              = true
-  resolvePrettierConfig = false
+  provider           = "tsx src/generator.ts"
+  output             = "withoutConfig.ts"
+  prettier           = true
+  prettierConfigPath = null
+}
+
+generator customConfig {
+  provider           = "tsx src/generator.ts"
+  output             = "customConfig.ts"
+  prettier           = true
+  prettierConfigPath = "../customConfig.js" // Tests run from inside __TEST_TMP__, so need ../
+}
+
+generator noPrettier {
+  provider           = "tsx src/generator.ts"
+  output             = "noPrettier.ts"
+  prettier           = false
+  prettierConfigPath = "not valid" // Shouldn't be validated since 'prettier' is false
 }
 
 // ========================
@@ -30,6 +44,7 @@ model User {
   id        String   @id @default(cuid())
   name      String
   email     String   @unique
+  data      Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

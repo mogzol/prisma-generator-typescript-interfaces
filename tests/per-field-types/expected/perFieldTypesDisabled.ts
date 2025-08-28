@@ -2,68 +2,66 @@
 
 export type Gender = "Male" | "Female" | "Other";
 
-export type DataTest = "Apple" | "Banana" | "Orange" | "Pear";
-
 export interface Person {
-  id: number;
-  name: string;
-  age: number;
-  email: string | null;
+  id: DefinedInt;
+  name: "constant string";
+  age: DefinedInt;
+  email: "constant string" | null;
   gender: Gender;
-  addressId: number;
+  addressId: DefinedInt;
   address?: Address;
-  friends?: Person[];
   friendsOf?: Person[];
+  friends?: Person[];
   data?: Data | null;
 }
 
 export interface Address {
-  id: number;
-  streetNumber: number;
-  streetName: string;
-  city: string;
+  id: DefinedInt;
+  streetNumber: DefinedInt;
+  streetName: "constant string";
+  city: "constant string";
   isBilling: boolean;
   people?: Person[];
 }
 
 export interface Data {
-  id: string;
-  stringField: string;
+  id: "constant string";
+  stringField: "constant string";
   booleanField: boolean;
-  intField: number;
+  intField: DefinedInt;
   bigIntField: bigint;
   floatField: number;
   decimalField: Decimal;
   dateField: Date;
   jsonField: JsonValue;
-  bytesField: BufferObject;
-  enumField: DataTest;
-  optionalStringField: string | null;
+  bytesField: Uint8Array;
+  customField: JsonValue;
+  optionalStringField: "constant string" | null;
   optionalBooleanField: boolean | null;
-  optionalIntField: number | null;
+  optionalIntField: DefinedInt | null;
   optionalBigIntField: bigint | null;
   optionalFloatField: number | null;
   optionalDecimalField: Decimal | null;
   optionalDateField: Date | null;
   optionalJsonField: JsonValue | null;
-  optionalBytesField: BufferObject | null;
-  optionalEnumField: DataTest | null;
-  stringArrayField: string[];
+  optionalBytesField: Uint8Array | null;
+  optionalCustomField: JsonValue | null;
+  stringArrayField: "constant string"[];
   booleanArrayField: boolean[];
-  intArrayField: number[];
+  intArrayField: DefinedInt[];
   bigIntArrayField: bigint[];
   floatArrayField: number[];
   decimalArrayField: Decimal[];
   dateArrayField: Date[];
   jsonArrayField: JsonValue[];
-  bytesArrayField: BufferObject[];
-  enumArrayField: DataTest[];
-  personId: number;
+  bytesArrayField: Uint8Array[];
+  customArrayField: JsonValue[];
+  personId: DefinedInt;
   person?: Person;
 }
+
+type DefinedInt = number;
 
 type Decimal = { valueOf(): string };
 
 type JsonValue = string | number | boolean | { [key in string]?: JsonValue } | Array<JsonValue> | null;
-
-type BufferObject = { type: "Buffer"; data: number[] };

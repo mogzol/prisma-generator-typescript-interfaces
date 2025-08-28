@@ -36,15 +36,15 @@ generator typescriptInterfaces {
   dateType    = "string"
   bigIntType  = "string"
   decimalType = "string"
-  bytesType   = "ArrayObject"
+  bytesType   = "number[]"
 }
 ```
 
-Note that `bigint` types don't have a default `toJSON` method, so the above assumes that you are converting them to strings somewhere along the line.
+Note that `bigint` types don't have a default `toJSON` method, so the above assumes that you are converting them to strings somewhere along the line. It also assumes that the `Uint8Array` values from `Bytes` fields are being converted to `number[]` arrays.
 
 ## Example
 
-Here is an example of a configuration that generates two separate outputs, `interfaces.ts` with types compatible with the Prisma client types, and a second `json-interfaces.ts` file with types matching the output of `JSON.stringify` when run on the models. Both files are output to the `src/dto` folder (which will be created if it doesn't exist) and are formatted using Prettier. The models in `json-interfaces.ts` also get a `Json` suffix attached to them.
+Here is an example of a configuration that generates two separate outputs, `interfaces.ts` with types compatible with the Prisma client types, and a second `json-interfaces.ts` file with types matching the output of `JSON.stringify` when run on the models (with the exception of `Bytes` and `BigInt` types, which will be `number[]` and `string` respectively). Both files are output to the `src/dto` folder (which will be created if it doesn't exist) and are formatted using Prettier. The models in `json-interfaces.ts` also get a `Json` suffix attached to them.
 
 #### Input
 
@@ -74,7 +74,7 @@ generator typescriptInterfacesJson {
   dateType    = "string"
   bigIntType  = "string"
   decimalType = "string"
-  bytesType   = "ArrayObject"
+  bytesType   = "number[]"
   exportEnums = false
   prettier    = true
 }
@@ -265,7 +265,7 @@ export interface DataJson {
   decimalField: string;
   dateField: string;
   jsonField: JsonValue;
-  bytesField: ArrayObject;
+  bytesField: number[];
   optionalStringField: string | null;
   optionalBooleanField: boolean | null;
   optionalIntField: number | null;
@@ -274,7 +274,7 @@ export interface DataJson {
   optionalDecimalField: string | null;
   optionalDateField: string | null;
   optionalJsonField: JsonValue | null;
-  optionalBytesField: ArrayObject | null;
+  optionalBytesField: number[] | null;
   stringArrayField: string[];
   booleanArrayField: boolean[];
   intArrayField: number[];
@@ -283,7 +283,7 @@ export interface DataJson {
   decimalArrayField: string[];
   dateArrayField: string[];
   jsonArrayField: JsonValue[];
-  bytesArrayField: ArrayObject[];
+  bytesArrayField: number[][];
   personId: number;
   person?: PersonJson;
 }
@@ -295,38 +295,32 @@ type JsonValue =
   | { [key in string]?: JsonValue }
   | Array<JsonValue>
   | null;
-
-type ArrayObject = { [index: number]: number } & { length?: never };
 ```
 
 </details>
 
 ## Options
 
-| **Option**            |                                        **Type**                                         |                                **Default**                                 | **Description**                                                                                                                                                                                               |
-| --------------------- | :-------------------------------------------------------------------------------------: | :------------------------------------------------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| output                |                                        `string`                                         |                             `"interfaces.ts"`                              | The output location for the generated TypeScript interfaces.                                                                                                                                                  |
-| enumPrefix            |                                        `string`                                         |                                    `""`                                    | Prefix to add to enum types.                                                                                                                                                                                  |
-| enumSuffix            |                                        `string`                                         |                                    `""`                                    | Suffix to add to enum types.                                                                                                                                                                                  |
-| enumObjectPrefix      |                                        `string`                                         |                                    `""`                                    | Prefix to add to enum objects. Only applies when `enumType` is `object`.                                                                                                                                      |
-| enumObjectSuffix      |                                        `string`                                         |                                    `""`                                    | Suffix to add to enum objects. Only applies when `enumType` is `object`.                                                                                                                                      |
-| modelPrefix           |                                        `string`                                         |                                    `""`                                    | Prefix to add to model types.                                                                                                                                                                                 |
-| modelSuffix           |                                        `string`                                         |                                    `""`                                    | Suffix to add to model types.                                                                                                                                                                                 |
-| typePrefix            |                                        `string`                                         |                                    `""`                                    | Prefix to add to [type](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-composite-types) types (MongoDB only).                                                               |
-| typeSuffix            |                                        `string`                                         |                                    `""`                                    | Suffix to add to [type](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-composite-types) types (MongoDB only).                                                               |
-| headerComment         |                                        `string`                                         | `"This file was auto-generated by prisma-generator-typescript-interfaces"` | Sets the header comment added to the top of the generated file. Set this to an empty string to disable the header comment. Supports multiple lines with `"\n"`.                                               |
-| modelType             |                                 `"interface" \| "type"`                                 |                               `"interface"`                                | Controls how model definitions are generated. `"interface"` will create TypeScript interfaces, `"type"` will create TypeScript types. If using MongoDB, this also affects `type` definitions.                 |
-| enumType              |                          `"stringUnion" \| "enum" \| "object"`                          |                              `"stringUnion"`                               | Controls how enums are generated. `"object"` will create an object and string union type like the Prisma client, `"enum"` will create TypeScript enums, `"stringUnion"` will just create a string union type. |
-| dateType              |                            `"Date" \| "string" \| "number"`                             |                                  `"Date"`                                  | The type to use for DateTime model fields.                                                                                                                                                                    |
-| bigIntType            |                           `"bigint" \| "string" \| "number"`                            |                                 `"bigint"`                                 | The type to use for BigInt model fields.                                                                                                                                                                      |
-| decimalType           |                           `"Decimal" \| "string" \| "number"`                           |                                `"Decimal"`                                 | The type to use for Decimal model fields. The `Decimal` type here is just an interface with a `valueOf()` function. You will need to cast to an actual Decimal type if you want to use other methods.         |
-| bytesType             | `"Uint8Array" \| "Buffer" \| "ArrayObject" \| "BufferObject" \| "string" \| "number[]"` |                               `"Uint8Array"`                               | The type to use for Bytes model fields. `ArrayObject` is a type which matches a `JSON.stringify`-ed Uint8Array. `BufferObject` is a type which matches a `JSON.stringify`-ed Buffer.                          |
-| exportEnums           |                                        `boolean`                                        |                                   `true`                                   | Controls whether enum definitions are exported. If `false`, enums will only be defined in the module scope for use by dependent types. Respects `enumType`.                                                   |
-| optionalRelations     |                                        `boolean`                                        |                                   `true`                                   | Controls whether model relation fields are optional. If `true`, all model relation fields will use `?:` in the field definition.                                                                              |
-| omitRelations         |                                        `boolean`                                        |                                  `false`                                   | Controls whether model relation fields are omitted. If `true`, model definitions will not include their relations.                                                                                            |
-| optionalNullables     |                                        `boolean`                                        |                                  `false`                                   | Controls whether nullable fields are optional. Nullable fields are always defined with `\| null` in their type definition, but if this is `true`, they will also use `?:`.                                    |
-| prettier              |                                        `boolean`                                        |                                  `false`                                   | Formats the output using Prettier. Setting this to `true` requires that the `prettier` package is available.                                                                                                  |
-| resolvePrettierConfig |                                        `boolean`                                        |                                   `true`                                   | Tries to find and use a Prettier config file relative to the output location.                                                                                                                                 |
+| Option(s)                                                                                                                                          |                 Type                  |                                  Default                                   | Description                                                                                                                                                                                                   |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | :-----------------------------------: | :------------------------------------------------------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| output                                                                                                                                             |               `string`                |                             `"interfaces.ts"`                              | The output location for the generated TypeScript interfaces.                                                                                                                                                  |
+| <br/>enumPrefix,<br/>enumSuffix <br/><br/>                                                                                                         |               `string`                |                                    `""`                                    | Prefix/suffix to add to enum types.                                                                                                                                                                           |
+| <br/>enumObjectPrefix,<br/>enumObjectSuffix <br/><br/>                                                                                             |               `string`                |                                    `""`                                    | Prefix/suffix to add to enum objects. Only applies when `enumType` is `object`.                                                                                                                               |
+| <br/>modelPrefix,<br/>modelSuffix <br/><br/>                                                                                                       |               `string`                |                                    `""`                                    | Prefix/suffix to add to model types.                                                                                                                                                                          |
+| <br/>typePrefix,<br/>typeSuffix <br/><br/>                                                                                                         |               `string`                |                                    `""`                                    | Prefix/suffix to add to [type](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model#defining-composite-types) types (MongoDB only).                                                        |
+| headerComment                                                                                                                                      |               `string`                | `"This file was auto-generated by prisma-generator-typescript-interfaces"` | Sets the header comment added to the top of the generated file. Set this to an empty string to disable the header comment. Supports multiple lines with `"\n"`.                                               |
+| modelType                                                                                                                                          |        `"interface" \| "type"`        |                               `"interface"`                                | Controls how model definitions are generated. `"interface"` will create TypeScript interfaces, `"type"` will create TypeScript types. If using MongoDB, this also affects `type` definitions.                 |
+| enumType                                                                                                                                           | `"stringUnion" \| "enum" \| "object"` |                              `"stringUnion"`                               | Controls how enums are generated. `"object"` will create an object and string union type like the Prisma client, `"enum"` will create TypeScript enums, `"stringUnion"` will just create a string union type. |
+| relations                                                                                                                                          | `"required" \| "optional" \| "none"`  |                                `"optional"`                                | Controls how relation fields are generated. `"required"` will have them be required fields on the model, `"optional"` will have them be optional, and `"none"` will exclude relations entirely.               |
+| counts                                                                                                                                             | `"required" \| "optional" \| "none"`  |                                  `"none"`                                  | Controls the `_count` field for models with relations. `"required"` will make it and all counts in it be required, `"optional"` will have them be optional, and `"none"` will exclude counts entirely.        |
+| <br/>stringType,<br/>booleanType,<br/>intType,<br/>floatType,<br/>jsonType,<br/>dateType,<br/>bigIntType,<br/>decimalType,<br/>bytesType<br/><br/> |               `string`                |                    See [Custom Types](CUSTOM_TYPES.md)                     | The TypeScript type to use for each Prisma type. See [Custom Types](CUSTOM_TYPES.md) for details.                                                                                                             |
+| typeImportPath                                                                                                                                     |               `string`                |                                    `""`                                    | The path to import custom types from when using [imported types](CUSTOM_TYPES.md#imported-types) or [per-field-types](CUSTOM_TYPES.md#per-field-types).                                                       |
+| perFieldTypes                                                                                                                                      |               `boolean`               |                                   `true`                                   | Whether to enable [per-field-types](CUSTOM_TYPES.md#per-field-types).                                                                                                                                         |
+| exportEnums                                                                                                                                        |               `boolean`               |                                   `true`                                   | Controls whether enum definitions are exported. If `false`, enums will only be defined inside the generated file.                                                                                             |
+| includeComments                                                                                                                                    |               `boolean`               |                                   `true`                                   | Controls whether documentation from the schema (comments starting with `///`) are copied into the generated output as `/** ... */` documentation blocks.                                                      |
+| optionalNullables                                                                                                                                  |               `boolean`               |                                  `false`                                   | Controls whether nullable fields are optional. Nullable fields are always defined with `\| null` in their type definition, but if this is `true`, they will also use `?:`.                                    |
+| prettier                                                                                                                                           |               `boolean`               |                                  `false`                                   | Formats the output using Prettier. Setting this to `true` requires that the `prettier` package is available.                                                                                                  |
+| prettierConfigPath                                                                                                                                 |           `string \| null`            |                                    `""`                                    | Path to the Prettier config file. If this is an empty string, the Prettier config file will be resolved relative to the output location. If this is `null`, no Prettier config file will be used.             |
 
 ## Issues
 
@@ -334,7 +328,7 @@ Please report any issues to the [issues](https://github.com/mogzol/prisma-genera
 
 ## Developing
 
-All the code for this generator is contained within the `generator.ts` file. You can build the generator by running `npm install` then `npm run build`.
+All the code for this generator is contained within the `src` directory. You can build the generator by running `npm install` then `npm run build`.
 
 ### Tests
 

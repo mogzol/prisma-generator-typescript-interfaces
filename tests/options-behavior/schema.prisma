@@ -6,16 +6,16 @@
 
 // Unlike other tests, this one should output to the default "interfaces.ts"
 generator noOptions {
-  provider = "tsx generator.ts"
+  provider = "tsx src/generator.ts"
 }
 
 generator customOutput {
-  provider = "tsx generator.ts"
+  provider = "tsx src/generator.ts"
   output   = "customOutput.ts"
 }
 
 generator defaultsSpecified {
-  provider    = "tsx generator.ts"
+  provider    = "tsx src/generator.ts"
   output      = "defaultsSpecified.ts"
   modelType   = "interface"
   enumType    = "stringUnion"
@@ -26,57 +26,77 @@ generator defaultsSpecified {
 }
 
 generator customHeader {
-  provider      = "tsx generator.ts"
+  provider      = "tsx src/generator.ts"
   output        = "customHeader.ts"
   headerComment = "This is a custom header"
 }
 
 generator noHeader {
-  provider      = "tsx generator.ts"
+  provider      = "tsx src/generator.ts"
   output        = "noHeader.ts"
   headerComment = ""
 }
 
 generator multilineHeader {
-  provider      = "tsx generator.ts"
+  provider      = "tsx src/generator.ts"
   output        = "multilineHeader.ts"
   headerComment = "This is a multiline header\nwith a second line\n  and a third line indented\nand emoji 🎉"
 }
 
 generator formatPrettier {
-  provider = "tsx generator.ts"
+  provider = "tsx src/generator.ts"
   output   = "formatPrettier.ts"
   prettier = true
 }
 
 generator requiredRelations {
-  provider          = "tsx generator.ts"
-  output            = "requiredRelations.ts"
-  optionalRelations = false
+  provider  = "tsx src/generator.ts"
+  output    = "requiredRelations.ts"
+  relations = "required"
 }
 
 generator omitRelations {
-  provider      = "tsx generator.ts"
-  output        = "omitRelations.ts"
-  omitRelations = true
+  provider  = "tsx src/generator.ts"
+  output    = "omitRelations.ts"
+  relations = "none"
+}
+
+generator requiredCounts {
+  provider = "tsx src/generator.ts"
+  output   = "requiredCounts.ts"
+  counts   = "required"
+}
+
+generator optionalCounts {
+  provider = "tsx src/generator.ts"
+  output   = "optionalCounts.ts"
+  counts   = "optional"
+}
+
+// Without relations, counts should not be included
+generator countsNoRelations {
+  provider  = "tsx src/generator.ts"
+  output    = "countsNoRelations.ts"
+  relations = "none"
+  counts    = "optional"
 }
 
 generator optionalNullables {
-  provider          = "tsx generator.ts"
+  provider          = "tsx src/generator.ts"
   output            = "optionalNullables.ts"
   optionalNullables = true
 }
 
 // Note that optionalNullables takes priority for a nullable relation.
 generator optionalNullablesRequiredRelations {
-  provider          = "tsx generator.ts"
+  provider          = "tsx src/generator.ts"
   output            = "optionalNullablesRequiredRelations.ts"
   optionalNullables = true
-  optionalRelations = false
+  relations         = "required"
 }
 
 generator prefixSuffix {
-  provider    = "tsx generator.ts"
+  provider    = "tsx src/generator.ts"
   output      = "prefixSuffix.ts"
   enumPrefix  = "enum"
   enumSuffix  = "Enum"
@@ -85,7 +105,7 @@ generator prefixSuffix {
 }
 
 generator stringTypes {
-  provider    = "tsx generator.ts"
+  provider    = "tsx src/generator.ts"
   output      = "stringTypes.ts"
   dateType    = "string"
   bigIntType  = "string"
@@ -94,7 +114,7 @@ generator stringTypes {
 }
 
 generator numberTypes {
-  provider    = "tsx generator.ts"
+  provider    = "tsx src/generator.ts"
   output      = "numberTypes.ts"
   dateType    = "number"
   bigIntType  = "number"
@@ -103,38 +123,26 @@ generator numberTypes {
 }
 
 generator bytesBuffer {
-  provider  = "tsx generator.ts"
+  provider  = "tsx src/generator.ts"
   output    = "bytesBuffer.ts"
   bytesType = "Buffer"
 }
 
-generator bytesBufferObject {
-  provider  = "tsx generator.ts"
-  output    = "bytesBufferObject.ts"
-  bytesType = "BufferObject"
-}
-
-generator bytesArrayObject {
-  provider  = "tsx generator.ts"
-  output    = "bytesArrayObject.ts"
-  bytesType = "ArrayObject"
-}
-
 generator enumType {
-  provider = "tsx generator.ts"
+  provider = "tsx src/generator.ts"
   output   = "enumType.ts"
   enumType = "enum"
 }
 
 generator enumExportFalse {
-  provider   = "tsx generator.ts"
-  output     = "enumExportFalse.ts"
-  enumType   = "enum"
+  provider    = "tsx src/generator.ts"
+  output      = "enumExportFalse.ts"
+  enumType    = "enum"
   exportEnums = false
 }
 
 generator enumTypePrefixSuffix {
-  provider   = "tsx generator.ts"
+  provider   = "tsx src/generator.ts"
   output     = "enumTypePrefixSuffix.ts"
   enumType   = "enum"
   enumPrefix = "e"
@@ -142,20 +150,20 @@ generator enumTypePrefixSuffix {
 }
 
 generator enumTypeObject {
-  provider = "tsx generator.ts"
+  provider = "tsx src/generator.ts"
   output   = "enumTypeObject.ts"
   enumType = "object"
 }
 
 generator enumExportFalseTypeObject {
-  provider   = "tsx generator.ts"
-  output     = "enumExportFalseTypeObject.ts"
-  enumType   = "object"
+  provider    = "tsx src/generator.ts"
+  output      = "enumExportFalseTypeObject.ts"
+  enumType    = "object"
   exportEnums = false
 }
 
 generator enumTypeObjectPrefixSuffix {
-  provider   = "tsx generator.ts"
+  provider   = "tsx src/generator.ts"
   output     = "enumTypeObjectPrefixSuffix.ts"
   enumType   = "object"
   enumPrefix = "e"
@@ -163,7 +171,7 @@ generator enumTypeObjectPrefixSuffix {
 }
 
 generator enumTypeObjectValuePrefixSuffix {
-  provider         = "tsx generator.ts"
+  provider         = "tsx src/generator.ts"
   output           = "enumTypeObjectValuePrefixSuffix.ts"
   enumType         = "object"
   enumPrefix       = "e"
@@ -173,7 +181,7 @@ generator enumTypeObjectValuePrefixSuffix {
 }
 
 generator modelType {
-  provider  = "tsx generator.ts"
+  provider  = "tsx src/generator.ts"
   output    = "modelType.ts"
   modelType = "type"
 }

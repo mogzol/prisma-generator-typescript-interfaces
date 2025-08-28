@@ -1,25 +1,25 @@
 {
   "name": "prisma-generator-typescript-interfaces",
-  "version": "2.1.0",
-  "description": "Generate zero-dependency Typescript interfaces from Prisma schema",
+  "version": "3.0.0",
+  "description": "Generate zero-dependency TypeScript interfaces from Prisma schema",
   "author": "Morgan Zolob",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mogzol/prisma-generator-typescript-interfaces"
+    "url": "git+https://github.com/mogzol/prisma-generator-typescript-interfaces.git"
   },
   "type": "module",
-  "main": "generator.js",
+  "main": "dist/generator.js",
   "files": [
-    "generator.js"
+    "dist"
   ],
   "bin": {
-    "prisma-generator-typescript-interfaces": "generator.js"
+    "prisma-generator-typescript-interfaces": "dist/generator.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "postbuild": "node -e \"g='generator.js';f=require('fs');f.writeFileSync(g,'#!/usr/bin/env node\\n'+f.readFileSync(g))\"",
-    "clean": "rimraf --glob generator.js **/__TEST_TMP__",
+    "postbuild": "node -e \"g='dist/generator.js';f=require('fs');f.writeFileSync(g,'#!/usr/bin/env node\\n'+f.readFileSync(g))\"",
+    "clean": "rimraf --glob dist **/__TEST_TMP__",
     "generate": "prisma generate --schema=prisma/example.prisma",
     "lint": "prettier --check . && eslint . && echo 'Linting complete.'",
     "lint:fix": "prettier --write . && eslint . --fix && echo 'Linting complete.'",
@@ -30,18 +30,18 @@
     "@prisma/generator-helper": "^5 || ^6"
   },
   "devDependencies": {
-    "@eslint/js": "^9.22.0",
-    "@prisma/client": "^6.5.0",
-    "@types/node": "^22.13.10",
-    "eslint": "^9.22.0",
-    "eslint-config-prettier": "^10.1.1",
+    "@eslint/js": "^9.34.0",
+    "@prisma/client": "^6.15.0",
+    "@types/node": "^24.3.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
-    "prettier": "^3.5.3",
-    "prisma": "^6.5.0",
+    "prettier": "^3.6.2",
+    "prisma": "^6.15.0",
     "rimraf": "^6.0.1",
-    "tsx": "^4.19.3",
-    "typescript": "^5.8.2",
-    "typescript-eslint": "^8.26.1"
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.41.0"
   },
   "keywords": [
     "prisma",
