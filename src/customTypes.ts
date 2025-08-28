@@ -29,7 +29,7 @@ export class CustomTypes {
   /** Map of model fields to per-field CustomTypes */
   private perFieldTypeMap: { [key: string]: { customType: CustomType; literal: boolean } } = {};
 
-  /** The CustomTypes that have been during generation */
+  /** The CustomTypes that have been used during generation */
   private usedTypes = new Set<CustomType>();
 
   /**
