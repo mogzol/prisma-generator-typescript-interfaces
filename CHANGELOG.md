@@ -2,7 +2,7 @@
 
 ### BREAKING CHANGES:
 
-- `omitRelations` and `optionalRelations` options have been replaced with just `relations`, which can be set to either `required`, `optional`, or `none`.
+- The `omitRelations` and `optionalRelations` options have been replaced with just `relations`, which can be set to either `required`, `optional`, or `none`.
 - The `BufferObject` and `ArrayObject` built-in types have been removed from the `bytesType` option. Their behavior can be replicated using [custom types](CUSTOM_TYPES.md):
   <!-- prettier-ignore -->
   ```prisma
@@ -23,7 +23,7 @@
 
 - Allow full control over the types used during generation, including allowing per-field types. See [Custom Types](CUSTOM_TYPES.md) for details.
   - Thanks [@helmturner](https://github.com/helmturner) for the initial per-field types work
-- Add the `includeComments` option to include documentation from the schema in the generated output (thanks [@samelie](@samelie))
+- Add the `includeComments` option to include documentation from the schema in the generated output (thanks [@samelie](https://github.com/samelie))
 - Add the `counts` option to include the `_count` field on models with relations. It can be set to either `required`, `optional`, or `none`.
 - Improve config validation and generator error messages. The generator name is now included in all errors since Prisma doesn't make it clear which generator an error is coming from.
 
