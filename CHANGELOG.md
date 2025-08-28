@@ -1,11 +1,9 @@
 # 3.0.0
 
-- **This release is still in development!**
-
 ### BREAKING CHANGES:
 
-- `omitRelations` and `optionalRelations` have been replaced with just `relations`, which can be set to either `required`, `optional`, or `none`.
-- The `BufferObject` and `ArrayObject` built-in types have been removed from `bytesType`. Their behavior can be replicated using custom types:
+- `omitRelations` and `optionalRelations` options have been replaced with just `relations`, which can be set to either `required`, `optional`, or `none`.
+- The `BufferObject` and `ArrayObject` built-in types have been removed from the `bytesType` option. Their behavior can be replicated using [custom types](CUSTOM_TYPES.md):
   <!-- prettier-ignore -->
   ```prisma
   generator typescriptInterfaces {

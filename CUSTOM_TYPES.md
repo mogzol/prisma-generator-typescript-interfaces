@@ -1,6 +1,6 @@
 # Custom Types
 
-The generator provides options for customizing all types used in the output. You can also specify types on individual fields using [per-field types](#per-field-types). The default values for these options, which are compatible with the Prisma client types, are as follows:
+This generator provides options for customizing all types used in the output. The default values for these options, which are compatible with the Prisma client types, are as follows:
 
 | Option      |                Default Value                |
 | :---------- | :-----------------------------------------: |
@@ -14,7 +14,12 @@ The generator provides options for customizing all types used in the output. You
 | decimalType |  [`Decimal`\*](#built-in-type-definitions)  |
 | bytesType   |                `Uint8Array`                 |
 
-Any of these options can be changed to be whatever valid TypeScript type you want. For example, the following generator config would modify the types of all Decimal, DateTime, and Json fields:
+All of these options can be changed to whatever TypeScript type definition you want.
+
+> [!Note]
+> It is also possible to specify types on individual fields, see [per-field types](#per-field-types) for more information.
+
+As an example, the following generator config would modify the types of all Decimal, DateTime, and Json fields:
 
 ```prisma
 generator typescriptInterfaces {
@@ -41,11 +46,11 @@ export interface MyData {
 }
 ```
 
-It should be noted that the generator does not perform any validation on these type options, so care should be taken to ensure you are specifying valid TypeScript types.
+It should be noted that the types from the options will be copied verbatim into the generated output without any validation, so care should be taken to ensure you are specifying valid types.
 
 ## Built-in Type Definitions
 
-The default type options include two type definitions which are not pre-existing TypeScript types: `JsonValue` and `Decimal`. The definitions for these types are built-in to the generator, and will be included in the output when necessary:
+The default type options include two type definitions which are not pre-existing TypeScript types: `JsonValue` and `Decimal`. The definitions for these types are built in to the generator, and will be included in the output when necessary:
 
 ```typescript
 type JsonValue =
@@ -63,7 +68,7 @@ The `Decimal` type mainly exists for compatibility with the Prisma client, and o
 
 ## Advanced Custom Types
 
-In addition to the basic usage where the types are generated in-line in the output, you can also specify types as either [defined types](#defined-types) or [imported types](#imported-types).
+In addition to the basic usage described above, you can also specify types as either [defined types](#defined-types) or [imported types](#imported-types).
 
 ### Defined Types
 
@@ -157,12 +162,12 @@ export interface MyData {
 }
 ```
 
-These type annotation comments must be documentation comments (with a triple-slash, like `///`) and not normal comments (`//`). You cannot put any text on the same line before the opening bracket, but you can include text after the closing bracket. You can include additional documentation above the type comment, but not below, the type annotation comment must be the final line of the documentation.
+Per-field types must be specified in documentation comments (with a triple-slash, like `///`) and not normal comments (`//`). If a field has multiple lines of documentation, the per-field type comment must be the final line, and that line must not have any text before the type.
 
 > [!Note]
-> If the `includeComments` option is enabled, the custom type documentation line will not be included in the generated comment.
+> If the `includeComments` option is enabled, the per-field type documentation line will not be included in the generated comment.
 
-There are two types of type annotations:
+There are two ways you can specify a type using per-field types:
 
 - Regular type annotations, which are wrapped in square brackets (`[` `]`)
 - Literal type annotations, which are wrapped in square brackets with an exclamation point at the start (`![` `]`).
