@@ -39,6 +39,7 @@ const CONFIG_SCHEMA = {
   exportEnums: "boolean",
   includeComments: "boolean",
   optionalNullables: "boolean",
+  optionalDefaults: "boolean",
   prettier: "boolean",
   prettierConfigPath: "nullableString",
 } as const;
@@ -168,6 +169,7 @@ export async function getConfig(options: GeneratorOptions): Promise<Config> {
     exportEnums: "true",
     includeComments: "true",
     optionalNullables: "false",
+    optionalDefaults: "false",
     prettier: "false",
 
     // User config

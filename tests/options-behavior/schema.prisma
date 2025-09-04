@@ -95,6 +95,19 @@ generator optionalNullablesRequiredRelations {
   relations         = "required"
 }
 
+generator optionalDefaults {
+  provider         = "tsx src/generator.ts"
+  output           = "optionalDefaults.ts"
+  optionalDefaults = true
+}
+
+generator optionalDefaultsAndNullables {
+  provider          = "tsx src/generator.ts"
+  output            = "optionalDefaultsAndNullables.ts"
+  optionalDefaults  = true
+  optionalNullables = true
+}
+
 generator prefixSuffix {
   provider    = "tsx src/generator.ts"
   output      = "prefixSuffix.ts"
@@ -226,19 +239,19 @@ model Address {
   streetNumber Int
   streetName   String
   city         String
-  isBilling    Boolean
+  isBilling    Boolean  @default(false)
   people       Person[]
 }
 
 model Data {
   id           String   @id @default(uuid()) @db.Uuid
   stringField  String
-  booleanField Boolean
-  intField     Int
+  booleanField Boolean  @default(true)
+  intField     Int      @default(42)
   bigIntField  BigInt
   floatField   Float
   decimalField Decimal
-  dateField    DateTime
+  dateField    DateTime @default(now())
   jsonField    Json
   bytesField   Bytes
   enumField    DataTest
@@ -248,13 +261,13 @@ model Data {
   optionalIntField     Int?
   optionalBigIntField  BigInt?
   optionalFloatField   Float?
-  optionalDecimalField Decimal?
+  optionalDecimalField Decimal?  @default(12.34)
   optionalDateField    DateTime?
   optionalJsonField    Json?
   optionalBytesField   Bytes?
   optionalEnumField    DataTest?
 
-  stringArrayField  String[]
+  stringArrayField  String[]   @default(["hello", "world"])
   booleanArrayField Boolean[]
   intArrayField     Int[]
   bigIntArrayField  BigInt[]

@@ -20,16 +20,20 @@ export function getModelTs(
 ): string {
   const countNames: string[] = [];
   let fields = modelData.fields
-    .map(({ name, kind, type, isRequired, isList, documentation }) => {
+    .map(({ name, kind, type, isRequired, hasDefaultValue, isList, documentation }) => {
       const getDefinition = (resolvedType: string, optional = false) => {
         const fieldDoc = parseFieldDocumentation(documentation);
         const fieldComment = config.includeComments
           ? documentationBlock(fieldDoc?.documentation, 2)
           : "";
+        const isOptional =
+          optional ||
+          (!isRequired && config.optionalNullables) ||
+          (hasDefaultValue && config.optionalDefaults);
         return (
           fieldComment +
           "  " +
-          `${name}${optional || (!isRequired && config.optionalNullables) ? "?" : ""}: ` +
+          `${name}${isOptional ? "?" : ""}: ` +
           `${wrapComplex(resolvedType)}${isList ? "[]" : ""}${!isRequired ? " | null" : ""};`
         );
       };

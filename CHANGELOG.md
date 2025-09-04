@@ -1,3 +1,7 @@
+## 3.1.0
+
+- Add `optionalDefaults` option to control whether fields with a default value are generated as optional or not (defaults to `false`).
+
 # 3.0.0
 
 ### BREAKING CHANGES:
