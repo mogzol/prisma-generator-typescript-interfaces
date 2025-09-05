@@ -12,4 +12,5 @@ prisma-generator-typescript-interfaces error: Invalid config:
  - Invalid typeImportPath: [["nested"],"type"]
  - Invalid exportEnums: "this"
  - Invalid optionalNullables: "a"
+ - Invalid optionalDefaults: "b"
  - prettierConfigPath does not exist: "/invalid/path!"

@@ -16,6 +16,7 @@ generator typescriptInterfaces {
   badOption          = "not"
   exportEnums        = "this"
   optionalNullables  = "a"
+  optionalDefaults   = "b"
   prettier           = true
   prettierConfigPath = "/invalid/path!"
 }
